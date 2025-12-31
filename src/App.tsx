@@ -1,10 +1,13 @@
-import { Button } from "./components/ui/button"
+import { RouterProvider } from "react-router-dom"
+import { router } from "./routes"
+import { ThemeProvider } from "./common/theme-provider"
 
 const App = () => {
   return (
-    <div className="text-red-500 bg-green-90 text-4xl">
-      my name is ashen samarasekera
-      <Button>ashen sa</Button>
+    <div className="">
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </div>
   )
 }
