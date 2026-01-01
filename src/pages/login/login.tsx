@@ -1,4 +1,3 @@
-import { ModeToggle } from '@/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,6 @@ export const Login = () => {
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
             <Card className="w-full max-w-md">
-                <ModeToggle />
                 <CardHeader className="text-center space-y-2">
                     <CardTitle className="text-3xl font-bold">Welcome back</CardTitle>
                     <CardDescription className="text-base">Sign in to your account</CardDescription>

@@ -1,5 +1,5 @@
-import { AuthLayout } from '@/layout'
-import { Login, Register } from '@/pages'
+import { AuthLayout, MainLayout } from '@/layout'
+import { Dashboard, Issue, Login, Register } from '@/pages'
 import { createBrowserRouter } from 'react-router-dom'
 
 export const router = createBrowserRouter([
@@ -16,6 +16,22 @@ export const router = createBrowserRouter([
                 path: '/register',
                 element: <Register />
             }
+        ]
+
+    },
+    {
+        path: '',
+        element: <MainLayout />,
+        children: [
+            {
+                path: '/dashboard',
+                element: <Dashboard />
+            },
+            {
+                path: '/issues',
+                element: <Issue />
+            },
+
         ]
     }
 
