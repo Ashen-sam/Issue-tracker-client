@@ -128,7 +128,7 @@ export const CommonTable = <T extends Record<string, any>>({
 
     return (
         <div className={`space-y-4 ${className}`}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-25">
                 <div className="relative flex-1 max-w-58">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
@@ -139,7 +139,7 @@ export const CommonTable = <T extends Record<string, any>>({
                             setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
-                        className="pl-10"
+                        className="pl-10 rounded-md"
                     />
                 </div>
                 <div className='flex items-center gap-2'>

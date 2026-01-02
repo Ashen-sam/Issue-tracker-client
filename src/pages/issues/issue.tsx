@@ -1,6 +1,8 @@
 import { Layers, Layers2, LayersPlus, Trash2 } from "lucide-react";
+import { useNavigate, Outlet, useParams } from "react-router-dom";
 
 import {
+    InitialPage,
     PriorityCommon,
     StatusCommon,
     type IssuePriority,
@@ -48,22 +50,22 @@ const mockIssues: Issue[] = [
         createdAt: "2025-01-15",
     },
     {
-        id: 4,
-        title: "API returns 500 error",
+        id: 5,
+        title: "Database connection timeout",
         status: "CLOSED",
         priority: "HIGH",
         createdAt: "2025-01-15",
     },
     {
-        id: 4,
-        title: "API returns 500 error",
+        id: 6,
+        title: "Email notification not sending",
         status: "CLOSED",
         priority: "HIGH",
         createdAt: "2025-01-15",
     },
     {
-        id: 4,
-        title: "API returns 500 error",
+        id: 7,
+        title: "Search functionality broken",
         status: "CLOSED",
         priority: "HIGH",
         createdAt: "2025-01-15",
@@ -71,8 +73,15 @@ const mockIssues: Issue[] = [
 ];
 
 export const Issue = () => {
-    const issueTableColumns = [
+    const navigate = useNavigate();
+    const { issueId } = useParams();
 
+    // If we're viewing a specific issue, show the Outlet
+    if (issueId) {
+        return <Outlet />;
+    }
+
+    const issueTableColumns = [
         {
             key: "title",
             header: "Title",
@@ -97,34 +106,43 @@ export const Issue = () => {
         },
     ];
 
+    const handleViewIssue = (item: Issue) => {
+        navigate(`/issues/${item.id}`);
+    };
+
+    const handleEditIssue = (item: Issue) => {
+        console.log('Edit:', item);
+    };
+
+    const handleDeleteIssue = (item: Issue) => {
+        console.log('Delete:', item);
+    };
+
     return (
-        <div className="w-full flex flex-col items-center gap-3">
-            {mockIssues.length !== 0 ? (
+        <div className="w-full flex  items-center  flex-col relative  gap-3">
+            {mockIssues.length == 0 ? (
                 <>
-                    <div className="relative w-full flex items-center justify-between rounded-sm border border-dashed px-3 py-1 overflow-hidden">
+                    <div className="absolute w-max left-0  rounded-md border border-dashed px-3 py-[5.2px] overflow-hidden">
                         {/* Subtle left-to-right glow */}
-                        <div
+                        {/* <div
                             className="absolute inset-0 rounded-sm"
                             style={{
                                 background: 'linear-gradient(to right, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%)',
                             }}
-                        />
+                        /> */}
 
-                        {/* Content */}
                         <div className="relative text-lg flex items-center justify-center gap-2 text-[16px]">
                             <Layers2 size={14} /> Issues
                         </div>
                     </div>
 
-
-
-                    <div className="w-full  rounded-sm relative">
-                        <div className="flex items-center gap-2  absolute right-0">
-                            <Button size={'sm'} variant={'outline'} className="inline-flex items-center gap-2 rounded-md  px-3 py-1.5 text-xs font-medium transition">
+                    <div className="w-full  relative">
+                        <div className="flex items-center gap-2 absolute right-0">
+                            <Button size={'sm'} variant={'outline'} className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition">
                                 <LayersPlus size={15} />
                                 New Issue
                             </Button>
-                            <Button size={'sm'} variant={'outline'} className="inline-flex items-center gap-2 rounded-md   px-3 py-1.5 text-xs font-medium transition">
+                            <Button size={'sm'} variant={'outline'} className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition">
                                 <Trash2 size={15} />
                             </Button>
                         </div>
@@ -132,42 +150,20 @@ export const Issue = () => {
                             data={mockIssues}
                             columns={issueTableColumns}
                             enableCheckbox={true}
-                            onView={(item) => console.log('View:', item)}
-                            onEdit={(item) => console.log('Edit:', item)}
-                            onDelete={(item) => console.log('Delete:', item)}
+                            onView={handleViewIssue}
+                            onEdit={handleEditIssue}
+                            onDelete={handleDeleteIssue}
                         />
                     </div>
                 </>
-
             ) : (
-                <div className="flex flex-col items-center text-center pt-30 gap-4 max-w-md">
-                    <div className="relative flex items-center justify-center w-20 h-20 rounded-xl border border-dashed">
-                        <div
-                            className="absolute inset-0 rounded-xl bg-white opacity-30 blur-lg "
-                            style={{
-                                background: 'radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 90%)',
-                            }}
-                        />
-
-                        {/* Icon on top */}
-                        <Layers size={40} className="relative dark:text-muted-foreground" />
-                    </div>
-
-
-                    <div className="text-xl font-semibold tracking-tight dark:text-muted-foreground">
-                        No issues yet
-                    </div>
-
-                    <div className="text-sm text-muted-foreground px-6 leading-relaxed">
-                        Track bugs, feature requests, and improvements in one
-                        place. Create your first issue to get started.
-                    </div>
-
-                    <Button variant={'outline'} className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition">
-                        <LayersPlus />
-                        New Issue
-                    </Button>
-                </div>
+                <InitialPage
+                    icon={Layers}
+                    title="No issues yet"
+                    description="Track bugs, feature requests, and improvements in one place. Create your first issue to get started."
+                    actionLabel="New Issue"
+                    actionIcon={LayersPlus}
+                    onAction={() => console.log('Create new issue')} />
             )}
         </div>
     );
