@@ -18,7 +18,9 @@ export const Dashboard = () => {
                     Create your first issue to start tracking work effectively."
                 actionLabel="New Issue"
                 actionIcon={LayersPlus}
+                actionLink="/issues"
                 onAction={() => console.log('Create new issue')} />
+
         </div>
     )
 }

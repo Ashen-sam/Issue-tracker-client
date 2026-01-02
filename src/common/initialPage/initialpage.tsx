@@ -1,5 +1,6 @@
 import { type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface InitialPageProps {
     icon: LucideIcon;
@@ -8,6 +9,7 @@ interface InitialPageProps {
     actionLabel?: string;
     onAction?: () => void;
     actionIcon?: LucideIcon;
+    actionLink?: string;
 }
 
 export const InitialPage = ({
@@ -15,6 +17,7 @@ export const InitialPage = ({
     title,
     description,
     actionLabel,
+    actionLink,
     onAction,
     actionIcon: ActionIcon,
 }: InitialPageProps) => {
@@ -38,15 +41,28 @@ export const InitialPage = ({
                 {description}
             </div>
 
-            {actionLabel && onAction && (
-                <Button
-                    variant="outline"
-                    className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
-                    onClick={onAction}
-                >
-                    {ActionIcon && <ActionIcon size={16} />}
-                    {actionLabel}
-                </Button>
+            {actionLabel && (actionLink || onAction) && (
+                actionLink ? (
+                    <Button
+                        variant="outline"
+                        className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
+                        asChild
+                    >
+                        <Link to={actionLink}>
+                            {ActionIcon && <ActionIcon size={16} />}
+                            {actionLabel}
+                        </Link>
+                    </Button>
+                ) : (
+                    <Button
+                        variant="outline"
+                        className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
+                        onClick={onAction}
+                    >
+                        {ActionIcon && <ActionIcon size={16} />}
+                        {actionLabel}
+                    </Button>
+                )
             )}
         </div>
     );

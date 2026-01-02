@@ -5,3 +5,4 @@ export * from "./issuedialog";
 export * from "./priorityCommon";
 export * from "./statusCommon";
 export * from "./initialPage";
+export * from "./IssueForm";

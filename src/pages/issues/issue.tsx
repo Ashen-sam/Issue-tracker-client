@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Layers, Layers2, LayersPlus, Trash2 } from "lucide-react";
 import { useNavigate, Outlet, useParams } from "react-router-dom";
 
 import {
     InitialPage,
+    IssueDialog,
+    IssueForm,
     PriorityCommon,
     StatusCommon,
     type IssuePriority,
@@ -75,6 +78,7 @@ const mockIssues: Issue[] = [
 export const Issue = () => {
     const navigate = useNavigate();
     const { issueId } = useParams();
+    const [isOpen, setIsOpen] = useState(false);
 
     // If we're viewing a specific issue, show the Outlet
     if (issueId) {
@@ -118,19 +122,25 @@ export const Issue = () => {
         console.log('Delete:', item);
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleCreateIssue = (data: any) => {
+        console.log('Form submitted:', data);
+        setIsOpen(false);
+    };
+
     return (
         <div className="w-full flex  items-center  flex-col relative  gap-3">
-            {mockIssues.length == 0 ? (
+            {mockIssues.length !== 0 ? (
+                <InitialPage
+                    icon={Layers}
+                    title="No issues yet"
+                    description="Track bugs, feature requests, and improvements in one place. Create your first issue to get started."
+                    actionLabel="New Issue"
+                    actionIcon={LayersPlus}
+                    onAction={() => setIsOpen(true)} />
+            ) : (
                 <>
                     <div className="absolute w-max left-0  rounded-md border border-dashed px-3 py-[5.2px] overflow-hidden">
-                        {/* Subtle left-to-right glow */}
-                        {/* <div
-                            className="absolute inset-0 rounded-sm"
-                            style={{
-                                background: 'linear-gradient(to right, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%)',
-                            }}
-                        /> */}
-
                         <div className="relative text-lg flex items-center justify-center gap-2 text-[16px]">
                             <Layers2 size={14} /> Issues
                         </div>
@@ -138,7 +148,12 @@ export const Issue = () => {
 
                     <div className="w-full  relative">
                         <div className="flex items-center gap-2 absolute right-0">
-                            <Button size={'sm'} variant={'outline'} className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition">
+                            <Button
+                                size={'sm'}
+                                variant={'outline'}
+                                className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition"
+                                onClick={() => setIsOpen(true)}
+                            >
                                 <LayersPlus size={15} />
                                 New Issue
                             </Button>
@@ -156,15 +171,20 @@ export const Issue = () => {
                         />
                     </div>
                 </>
-            ) : (
-                <InitialPage
-                    icon={Layers}
-                    title="No issues yet"
-                    description="Track bugs, feature requests, and improvements in one place. Create your first issue to get started."
-                    actionLabel="New Issue"
-                    actionIcon={LayersPlus}
-                    onAction={() => console.log('Create new issue')} />
             )}
+
+            <IssueDialog
+                open={isOpen}
+                mode="create"
+                title="Create Issue"
+                onClose={() => setIsOpen(false)}
+            >
+                <IssueForm
+                    mode="create"
+                    onSubmit={handleCreateIssue}
+                    onCancel={() => setIsOpen(false)}
+                />
+            </IssueDialog>
         </div>
     );
 };
