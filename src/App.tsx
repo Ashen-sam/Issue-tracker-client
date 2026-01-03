@@ -1,15 +1,24 @@
-import { RouterProvider } from "react-router-dom"
-import { router } from "./routes"
-import { ThemeProvider } from "./common/theme-provider"
+import { RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
+import { router } from "./routes";
+import { ThemeProvider } from "./common/theme-provider";
+import { store } from "./store";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
-    <div className="">
+    <Provider store={store}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
+        <Toaster
+          position="top-right"
+          expand={false}
+          richColors
+          closeButton
+        />
       </ThemeProvider>
-    </div>
-  )
-}
+    </Provider>
+  );
+};
 
-export default App
+export default App;

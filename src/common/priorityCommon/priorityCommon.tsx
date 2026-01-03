@@ -8,7 +8,6 @@ interface PriorityBadgeProps {
     className?: string;
 }
 
-// Only color for icon
 const iconStyles: Record<IssuePriority, string> = {
     LOW: "text-green-400",
     MEDIUM: "text-yellow-400",
@@ -22,9 +21,9 @@ const priorityLabel: Record<IssuePriority, string> = {
 };
 
 const priorityIcon: Record<IssuePriority, React.ElementType> = {
-    LOW: ArrowDown,   // down arrow for low
-    MEDIUM: Minus,    // dash for medium
-    HIGH: ArrowUp,    // up arrow for high
+    LOW: ArrowDown,
+    MEDIUM: Minus,
+    HIGH: ArrowUp,
 };
 
 export const PriorityCommon = ({ priority, className }: PriorityBadgeProps) => {

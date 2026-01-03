@@ -1,79 +1,83 @@
-import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
-import type { ReactNode } from "react"
-
-type DialogMode = "create" | "edit" | "delete" | "view"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import type { ReactNode } from "react";
 
 interface IssueDialogProps {
-    open: boolean
-    mode: DialogMode
-    title: string
-    children: ReactNode
-    confirmText?: string
-    cancelText?: string
-    onClose: () => void
-    onConfirm?: () => void
+    open: boolean;
+    title: string;
+    note?: string;
+    icon?: ReactNode;
+    children: ReactNode;
+    footer?: ReactNode;
+    onClose: () => void;
+    className?: string;
 }
 
 export const IssueDialog = ({
     open,
-    mode,
     title,
+    note,
+    icon,
     children,
-    confirmText = "Confirm",
-    cancelText = "Cancel",
+    footer,
     onClose,
-    onConfirm,
+    className = "",
 }: IssueDialogProps) => {
-    const danger = mode === "delete"
-
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog
+            open={open}
+            onOpenChange={(val) => {
+                if (!val) return;
+                onClose();
+            }}
+        >
             <DialogContent
-                className={cn(
-                    "max-w-lg border border-zinc-800  text-zinc-100",
-                    "dark:bg-[#1a1a1a] dark:border-zinc-800"
-                )}
+                className={`
+                    ${className}
+                    p-0 gap-0 rounded-md
+                    backdrop-blur-xl bg-white/70 dark:bg-zinc-900/50 
+                    border border-zinc-300 dark:border-[#2a2a2a]
+                    shadow-[0_0_40px_rgba(0,0,0,0.20)]
+                    data-[state=open]:animate-in
+                    data-[state=open]:fade-in-0
+                    data-[state=open]:zoom-in-95
+                    data-[state=closed]:animate-out
+                    data-[state=closed]:fade-out-0
+                    data-[state=closed]:zoom-out-95
+                    duration-200
+                    overflow-hidden
+                `}
             >
-                <DialogHeader>
-                    <DialogTitle className="text-sm font-semibold tracking-wide text-zinc-100">
-                        {title}
-                    </DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-4 py-2">{children}</div>
-
-                <DialogFooter className="gap-2">
-                    <Button
-                        variant="ghost"
-                        onClick={onClose}
-                        className="text-zinc-300 hover:bg-zinc-900 hover:text-zinc-100 dark:text-zinc-300"
-                    >
-                        {cancelText}
-                    </Button>
-
-                    {onConfirm && (
-                        <Button
-                            onClick={onConfirm}
-                            className={cn(
-                                "px-4",
-                                danger
-                                    ? "bg-red-600 hover:bg-red-700 text-white"
-                                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                <div className="flex items-center justify-between px-4 py-2.5 bg-white/60 dark:bg-[#1a1a1a] backdrop-blur-xl">
+                    <div className="flex gap-3 items-center pt-3">
+                        {icon && (
+                            <div className="border bg-primary/10 rounded-sm p-2">
+                                {icon}
+                            </div>
+                        )}
+                        <div className="flex flex-col gap-[3px]">
+                            <DialogTitle className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                {title}
+                            </DialogTitle>
+                            {note && (
+                                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                    {note}
+                                </div>
                             )}
-                        >
-                            {confirmText}
-                        </Button>
-                    )}
-                </DialogFooter>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div className="px-4 py-4 bg-white/40 dark:bg-[#1a1a1a] backdrop-blur-xl max-h-[70vh] overflow-y-auto">
+                    {children}
+                </div>
+
+                {footer && (
+                    <div className="px-4 py-3 border-t-2 border-dashed border-zinc-300 dark:border-white/10 flex justify-end bg-white/50 dark:bg-[#1a1a1a] backdrop-blur-xl">
+                        {footer}
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};

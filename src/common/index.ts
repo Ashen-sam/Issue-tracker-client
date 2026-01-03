@@ -6,3 +6,4 @@ export * from "./priorityCommon";
 export * from "./statusCommon";
 export * from "./initialPage";
 export * from "./IssueForm";
+export * from "./IssueDilogFooter";
