@@ -30,14 +30,14 @@ export const InitialPage = ({
                         background: 'radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 90%)',
                     }}
                 />
-                <Icon size={40} className="relative text-zinc-600 dark:text-muted-foreground" />
+                <Icon size={40} className="relative text-zinc-600 dark:text-zinc-200" />
             </div>
 
-            <div className="text-xl text-zinc-600 font-semibold tracking-tight dark:text-muted-foreground">
+            <div className="text-xl text-zinc-600 font-semibold tracking-tight dark:text-zinc-200">
                 {title}
             </div>
 
-            <div className="text-sm text-muted-foreground px-6 leading-relaxed">
+            <div className="text-sm text-muted-foreground dark:text-zinc-200 px-6 leading-relaxed">
                 {description}
             </div>
 
@@ -45,7 +45,11 @@ export const InitialPage = ({
                 actionLink ? (
                     <Button
                         variant="outline"
-                        className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
+                        className="mt-2 inline-flex items-center gap-2 bg-indigo-700/80 text-white
+  dark:bg-indigo-500/60
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white
+  transitionrounded-md border px-4 py-2 text-sm font-medium  transition"
                         asChild
                     >
                         <Link to={actionLink}>
@@ -56,7 +60,15 @@ export const InitialPage = ({
                 ) : (
                     <Button
                         variant="outline"
-                        className="mt-2 inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition"
+                        className="
+  mt-2 inline-flex items-center gap-2 rounded-md
+  px-4 py-2 text-sm font-medium
+  bg-indigo-700/80 text-white
+  dark:bg-indigo-500/60
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white
+  transition
+"
                         onClick={onAction}
                     >
                         {ActionIcon && <ActionIcon size={16} />}

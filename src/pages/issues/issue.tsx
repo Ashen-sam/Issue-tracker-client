@@ -1,6 +1,7 @@
-import { Layers, Layers2, LayersPlus, Pencil, Plus, Trash2 } from "lucide-react";
+import { Layers, Layers2, LayersPlus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import {
     InitialPage,
@@ -14,96 +15,45 @@ import {
 } from "@/common";
 import { CommonTable } from "@/common/commonTable";
 import { Button } from "@/components/ui/button";
-
-interface Issue {
-    id: number;
-    title: string;
-    description?: string;
-    status: IssueStatus;
-    priority: IssuePriority;
-    createdAt: string;
-}
-
-const initialMockIssues: Issue[] = [
-    {
-        id: 1,
-        title: "Login button not working",
-        description: "Users unable to click the login button on mobile devices",
-        status: "OPEN",
-        priority: "HIGH",
-        createdAt: "2025-01-10",
-    },
-    {
-        id: 2,
-        title: "Dashboard loading slow",
-        description: "Dashboard takes more than 5 seconds to load",
-        status: "IN_PROGRESS",
-        priority: "MEDIUM",
-        createdAt: "2025-01-12",
-    },
-    {
-        id: 3,
-        title: "Fix mobile navbar UI",
-        description: "Mobile navigation menu is not responsive",
-        status: "RESOLVED",
-        priority: "LOW",
-        createdAt: "2025-01-14",
-    },
-    {
-        id: 4,
-        title: "API returns 500 error",
-        description: "Server error when fetching user data",
-        status: "CLOSED",
-        priority: "HIGH",
-        createdAt: "2025-01-15",
-    },
-    {
-        id: 5,
-        title: "Database connection timeout",
-        description: "Connection timeout after 30 seconds",
-        status: "CLOSED",
-        priority: "HIGH",
-        createdAt: "2025-01-15",
-    },
-    {
-        id: 6,
-        title: "Email notification not sending",
-        description: "Password reset emails not being delivered",
-        status: "CLOSED",
-        priority: "HIGH",
-        createdAt: "2025-01-15",
-    },
-    {
-        id: 7,
-        title: "Search functionality broken",
-        description: "Search returns no results for valid queries",
-        status: "CLOSED",
-        priority: "HIGH",
-        createdAt: "2025-01-15",
-    },
-];
-
+import {
+    useCreateIssueMutation,
+    useDeleteIssueMutation,
+    useGetIssuesQuery,
+    useUpdateIssueMutation,
+    type IIssue,
+} from "../../services/issueApi";
+import type { RootState } from "@/store";
 export const Issue = () => {
     const navigate = useNavigate();
     const { issueId } = useParams();
+    const currentUser = useSelector((state: RootState) => state.auth.user);
+    const [currentFormData, setCurrentFormData] = useState(null);
+    const { data: issuesData, isLoading: isLoadingIssues } = useGetIssuesQuery({});
+    const [createIssue] = useCreateIssueMutation();
+    const [updateIssue] = useUpdateIssueMutation();
+    const [deleteIssue] = useDeleteIssueMutation();
 
-    const [issues, setIssues] = useState<Issue[]>(initialMockIssues);
-    const [selectedIssues, setSelectedIssues] = useState<number[]>([]);
+    const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
 
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
-    const [currentIssue, setCurrentIssue] = useState<Issue | null>(null);
+    const [currentIssue, setCurrentIssue] = useState<IIssue | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // If we're viewing a specific issue, show the Outlet
     if (issueId) {
         return <Outlet />;
     }
 
-    const handleCreate = (formData: {
+    const issues = currentUser
+        ? (issuesData?.issues || []).filter(issue => {
+            const creatorId = issue.createdBy?._id || issue.createdBy?.id;
+            return creatorId === currentUser.id;
+        })
+        : [];
+    const handleCreate = async (formData: {
         title: string;
         description: string;
         status: IssueStatus;
@@ -111,39 +61,24 @@ export const Issue = () => {
         createdAt: string;
     }) => {
         setIsLoading(true);
-        setTimeout(() => {
-            const newIssue: Issue = {
-                id: Math.max(...issues.map(i => i.id), 0) + 1,
-                ...formData,
-            };
-            setIssues(prev => [newIssue, ...prev]);
-            console.log('Issue created:', newIssue);
-            setIsLoading(false);
+        try {
+            await createIssue({
+                title: formData.title,
+                description: formData.description,
+                status: formData.status,
+                priority: formData.priority,
+            }).unwrap();
+            console.log('Issue created successfully');
             setCreateOpen(false);
-        }, 1000);
-    };
-
-    const handleCreateAnother = (formData: {
-        title: string;
-        description: string;
-        status: IssueStatus;
-        priority: IssuePriority;
-        createdAt: string;
-    }) => {
-        setIsLoading(true);
-        setTimeout(() => {
-            const newIssue: Issue = {
-                id: Math.max(...issues.map(i => i.id), 0) + 1,
-                ...formData,
-            };
-            setIssues(prev => [newIssue, ...prev]);
-            console.log('Issue created, ready for another:', newIssue);
+        } catch (error) {
+            console.error('Failed to create issue:', error);
+        } finally {
             setIsLoading(false);
-            // Don't close dialog, just reset loading state
-        }, 1000);
+        }
     };
 
-    const handleEdit = (formData: {
+
+    const handleEdit = async (formData: {
         title: string;
         description: string;
         status: IssueStatus;
@@ -153,41 +88,55 @@ export const Issue = () => {
         if (!currentIssue) return;
 
         setIsLoading(true);
-        setTimeout(() => {
-            setIssues(prev => prev.map(issue =>
-                issue.id === currentIssue.id
-                    ? { ...issue, ...formData }
-                    : issue
-            ));
-            console.log('Issue edited:', { ...currentIssue, ...formData });
-            setIsLoading(false);
+        try {
+            await updateIssue({
+                id: currentIssue._id,
+                body: {
+                    title: formData.title,
+                    description: formData.description,
+                    status: formData.status,
+                    priority: formData.priority,
+                }
+            }).unwrap();
             setEditOpen(false);
             setCurrentIssue(null);
-        }, 1000);
+        } catch (error) {
+            console.error('Failed to update issue:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!currentIssue) return;
 
         setIsLoading(true);
-        setTimeout(() => {
-            setIssues(prev => prev.filter(issue => issue.id !== currentIssue.id));
-            console.log('Issue deleted:', currentIssue);
-            setIsLoading(false);
+        try {
+            await deleteIssue(currentIssue._id).unwrap();
+            console.log('Issue deleted successfully');
             setDeleteOpen(false);
             setCurrentIssue(null);
-        }, 1000);
+        } catch (error) {
+            console.error('Failed to delete issue:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleBulkDelete = () => {
+    const handleBulkDelete = async () => {
         setIsLoading(true);
-        setTimeout(() => {
-            setIssues(prev => prev.filter(issue => !selectedIssues.includes(issue.id)));
-            console.log('Bulk deleted issues:', selectedIssues);
+        try {
+            await Promise.all(
+                selectedIssues.map(id => deleteIssue(id).unwrap())
+            );
+            console.log('Bulk deleted issues successfully');
             setSelectedIssues([]);
-            setIsLoading(false);
             setBulkDeleteOpen(false);
-        }, 1000);
+        } catch (error) {
+            console.error('Failed to bulk delete issues:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const issueTableColumns = [
@@ -198,40 +147,51 @@ export const Issue = () => {
         {
             key: "status",
             header: "Status",
-            render: (item: Issue) => (
+            render: (item: IIssue) => (
                 <StatusCommon status={item.status} />
             ),
         },
         {
             key: "priority",
             header: "Priority",
-            render: (item: Issue) => (
+            render: (item: IIssue) => (
                 <PriorityCommon priority={item.priority} />
             ),
         },
         {
             key: "createdAt",
             header: "Created At",
+            render: (item: IIssue) => (
+                new Date(item.createdAt).toLocaleDateString()
+            ),
         },
     ];
 
-    const handleViewIssue = (item: Issue) => {
-        navigate(`/issues/${item.id}`);
+    const handleViewIssue = (item: IIssue) => {
+        navigate(`/issues/${item._id}`);
     };
 
-    const handleEditIssue = (item: Issue) => {
+    const handleEditIssue = (item: IIssue) => {
         setCurrentIssue(item);
         setEditOpen(true);
     };
 
-    const handleDeleteIssue = (item: Issue) => {
+    const handleDeleteIssue = (item: IIssue) => {
         setCurrentIssue(item);
         setDeleteOpen(true);
     };
 
-    const handleSelectionChange = (selectedIds: number[]) => {
+    const handleSelectionChange = (selectedIds: string[]) => {
         setSelectedIssues(selectedIds);
     };
+
+    if (isLoadingIssues) {
+        return (
+            <div className="w-full flex items-center justify-center py-8">
+                <div className="text-gray-500">Loading issues...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full flex items-center flex-col relative gap-3">
@@ -255,9 +215,12 @@ export const Issue = () => {
                     <div className="w-full relative">
                         <div className="flex items-center gap-2 absolute right-0">
                             <Button
-                                size={'sm'}
                                 variant={'outline'}
-                                className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition"
+                                size={'sm'}
+                                className="inline-flex bg-indigo-700/80 text-white
+  dark:bg-indigo-500/60
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white items-center gap-2  px-3 py-1.5 text-xs font-medium transition"
                                 onClick={() => setCreateOpen(true)}
                             >
                                 <LayersPlus size={15} />
@@ -290,13 +253,12 @@ export const Issue = () => {
                 open={createOpen}
                 title="Create Issue"
                 note="Add a new issue to the tracker"
-                icon={<Plus size={15} />}
+                icon={<LayersPlus size={15} />}
                 onClose={() => setCreateOpen(false)}
                 footer={
                     <IssueDialogFooter
                         onCancel={() => setCreateOpen(false)}
-                        onConfirm={handleCreate}
-                        onConfirmAndCreateAnother={handleCreateAnother}
+                        onConfirm={() => currentFormData && handleCreate(currentFormData)}
                         confirmText="Create"
                         isLoading={isLoading}
                         formMode="add"
@@ -304,12 +266,12 @@ export const Issue = () => {
                 }
             >
                 <IssueForm
+                    onFormDataChange={setCurrentFormData}
                     onSubmit={handleCreate}
                     onCancel={() => setCreateOpen(false)}
                 />
             </IssueDialog>
 
-            {/* Edit Dialog */}
             <IssueDialog
                 open={editOpen}
                 title="Edit Issue"
@@ -325,7 +287,7 @@ export const Issue = () => {
                             setEditOpen(false);
                             setCurrentIssue(null);
                         }}
-                        onConfirm={handleEdit}
+                        onConfirm={() => { }}
                         confirmText="Save Changes"
                         isLoading={isLoading}
                         formMode="edit"
@@ -343,7 +305,6 @@ export const Issue = () => {
                 />
             </IssueDialog>
 
-            {/* Delete Single Issue Dialog */}
             <IssueDialog
                 open={deleteOpen}
                 title="Delete Issue"

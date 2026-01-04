@@ -1,37 +1,30 @@
-import { Moon, Sun } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Moon, Sun, Monitor } from "lucide-react"
 import { useTheme } from "./theme-provider"
 
 export function ModeToggle() {
-    const { setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
 
+    const themes = [
+        { value: "light", icon: Sun, label: "Light" },
+        { value: "dark", icon: Moon, label: "Dark" },
+        { value: "system", icon: Monitor, label: "System" },
+    ] as const
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                    <span className="sr-only">Toggle theme</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                    Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground">
+            {themes.map(({ value, icon: Icon, label }) => (
+                <button
+                    key={value}
+                    onClick={() => setTheme(value)}
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${theme === value
+                        ? "bg-background text-foreground shadow"
+                        : "hover:bg-background/50"
+                        }`}
+                    type="button"
+                >
+                    <Icon className="h-4 w-4" />
+                    <span className="sr-only">{label}</span>
+                </button>
+            ))}
+        </div>
     )
 }

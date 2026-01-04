@@ -43,11 +43,11 @@ interface CommonTableProps<T> {
     onEdit?: (item: T) => void;
     onDelete?: (item: T) => void;
     enableCheckbox?: boolean;
-    onSelectedRowsChange?: (selectedRows: T[]) => void;
+    onSelectionChange?: (selectedIds: string[]) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const CommonTable = <T extends Record<string, any>>({
+export const CommonTable = <T extends { _id: string } & Record<string, any>>({
     data,
     columns,
     emptyMessage = 'No data available',
@@ -56,13 +56,13 @@ export const CommonTable = <T extends Record<string, any>>({
     onEdit,
     onDelete,
     enableCheckbox = false,
-    onSelectedRowsChange,
+    onSelectionChange,
 }: CommonTableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
-    const [openPopover, setOpenPopover] = useState<number | null>(null);
+    const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+    const [openPopover, setOpenPopover] = useState<string | null>(null);
 
     const getCellValue = (item: T, column: Column<T>) => {
         if (column.render) return column.render(item);
@@ -88,36 +88,35 @@ export const CommonTable = <T extends Record<string, any>>({
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            const allIndices = new Set(paginatedData.map((_, idx) => startIndex + idx));
-            setSelectedRows(allIndices);
-            if (onSelectedRowsChange) {
-                onSelectedRowsChange(paginatedData);
+            const allIds = new Set(paginatedData.map(item => item._id));
+            setSelectedRows(allIds);
+            if (onSelectionChange) {
+                onSelectionChange(Array.from(allIds));
             }
         } else {
             setSelectedRows(new Set());
-            if (onSelectedRowsChange) {
-                onSelectedRowsChange([]);
+            if (onSelectionChange) {
+                onSelectionChange([]);
             }
         }
     };
 
-    const handleSelectRow = (index: number, checked: boolean) => {
+    const handleSelectRow = (id: string, checked: boolean) => {
         const newSelected = new Set(selectedRows);
         if (checked) {
-            newSelected.add(index);
+            newSelected.add(id);
         } else {
-            newSelected.delete(index);
+            newSelected.delete(id);
         }
         setSelectedRows(newSelected);
 
-        if (onSelectedRowsChange) {
-            const selected = filteredData.filter((_, idx) => newSelected.has(idx));
-            onSelectedRowsChange(selected);
+        if (onSelectionChange) {
+            onSelectionChange(Array.from(newSelected));
         }
     };
 
     const isAllSelected = paginatedData.length > 0 &&
-        paginatedData.every((_, idx) => selectedRows.has(startIndex + idx));
+        paginatedData.every(item => selectedRows.has(item._id));
 
     const handleAction = (action: 'view' | 'edit' | 'delete', item: T) => {
         setOpenPopover(null);
@@ -186,85 +185,82 @@ export const CommonTable = <T extends Record<string, any>>({
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            paginatedData.map((item, rowIndex) => {
-                                const actualIndex = startIndex + rowIndex;
-                                return (
-                                    <TableRow
-                                        key={actualIndex}
-                                        className="text-sm border-b hover:dark:bg-zinc-800/20 transition-colors"
-                                    >
-                                        {enableCheckbox && (
-                                            <TableCell className="px-4 py-3">
-                                                <Checkbox
-                                                    checked={selectedRows.has(actualIndex)}
-                                                    onCheckedChange={(checked) =>
-                                                        handleSelectRow(actualIndex, checked as boolean)
-                                                    }
-                                                />
-                                            </TableCell>
-                                        )}
-                                        {columns.map((column, colIndex) => (
-                                            <TableCell key={colIndex} className="px-4 py-3">
-                                                {getCellValue(item, column)}
-                                            </TableCell>
-                                        ))}
-                                        {(onView || onEdit || onDelete) && (
-                                            <TableCell className="px-4 py-3 text-center">
-                                                <Popover
-                                                    open={openPopover === actualIndex}
-                                                    onOpenChange={(open) => setOpenPopover(open ? actualIndex : null)}
-                                                >
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                        >
-                                                            <MoreHorizontal className='text-zinc-400' />
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-30 p-1" align="end">
-                                                        <div className="flex flex-col">
-                                                            {onView && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="justify-start gap-3"
-                                                                    onClick={() => handleAction('view', item)}
-                                                                >
-                                                                    <Bolt />
-                                                                    View
-                                                                </Button>
-                                                            )}
-                                                            {onEdit && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="justify-start gap-3"
-                                                                    onClick={() => handleAction('edit', item)}
-                                                                >
-                                                                    <Pencil />
-                                                                    Edit
-                                                                </Button>
-                                                            )}
-                                                            {onDelete && (
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    className="justify-start gap-3 text-red-400 hover:text-red-500"
-                                                                    onClick={() => handleAction('delete', item)}
-                                                                >
-                                                                    <Trash2 />
-                                                                    Delete
-                                                                </Button>
-                                                            )}
-                                                        </div>
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </TableCell>
-                                        )}
-                                    </TableRow>
-                                );
-                            })
+                            paginatedData.map((item) => (
+                                <TableRow
+                                    key={item._id}
+                                    className="text-sm border-b hover:dark:bg-zinc-800/20 transition-colors"
+                                >
+                                    {enableCheckbox && (
+                                        <TableCell className="px-4 py-3">
+                                            <Checkbox
+                                                checked={selectedRows.has(item._id)}
+                                                onCheckedChange={(checked) =>
+                                                    handleSelectRow(item._id, checked as boolean)
+                                                }
+                                            />
+                                        </TableCell>
+                                    )}
+                                    {columns.map((column, colIndex) => (
+                                        <TableCell key={colIndex} className="px-4 py-3">
+                                            {getCellValue(item, column)}
+                                        </TableCell>
+                                    ))}
+                                    {(onView || onEdit || onDelete) && (
+                                        <TableCell className="px-4 py-3 text-center">
+                                            <Popover
+                                                open={openPopover === item._id}
+                                                onOpenChange={(open) => setOpenPopover(open ? item._id : null)}
+                                            >
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                    >
+                                                        <MoreHorizontal className='text-zinc-400' />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-30 p-1" align="end">
+                                                    <div className="flex flex-col">
+                                                        {onView && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="justify-start gap-3"
+                                                                onClick={() => handleAction('view', item)}
+                                                            >
+                                                                <Bolt />
+                                                                View
+                                                            </Button>
+                                                        )}
+                                                        {onEdit && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="justify-start gap-3"
+                                                                onClick={() => handleAction('edit', item)}
+                                                            >
+                                                                <Pencil />
+                                                                Edit
+                                                            </Button>
+                                                        )}
+                                                        {onDelete && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="justify-start gap-3 text-red-400 hover:text-red-500"
+                                                                onClick={() => handleAction('delete', item)}
+                                                            >
+                                                                <Trash2 />
+                                                                Delete
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            ))
                         )}
                     </TableBody>
                 </Table>

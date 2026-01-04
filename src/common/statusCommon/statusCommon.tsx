@@ -6,7 +6,7 @@ import {
     XCircle
 } from "lucide-react";
 
-export type IssueStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+export type IssueStatus = "Open" | "In Progress" | "Resolved" | "Closed";
 
 interface StatusBadgeProps {
     status: IssueStatus;
@@ -14,24 +14,24 @@ interface StatusBadgeProps {
 }
 
 const iconStyles: Record<IssueStatus, string> = {
-    OPEN: "text-blue-500",
-    IN_PROGRESS: "text-yellow-500",
-    RESOLVED: "text-green-500",
-    CLOSED: "text-gray-400",
+    "Open": "text-blue-500",
+    "In Progress": "text-yellow-500",
+    "Resolved": "text-green-500",
+    "Closed": "text-gray-400",
 };
 
 const statusLabel: Record<IssueStatus, string> = {
-    OPEN: "Open",
-    IN_PROGRESS: "In Progress",
-    RESOLVED: "Resolved",
-    CLOSED: "Closed",
+    "Open": "Open",
+    "In Progress": "In Progress",
+    "Resolved": "Resolved",
+    "Closed": "Closed",
 };
 
 const statusIcon: Record<IssueStatus, React.ElementType> = {
-    OPEN: Hexagon,
-    IN_PROGRESS: CircleDashed,
-    RESOLVED: BadgeCheck,
-    CLOSED: XCircle,
+    "Open": Hexagon,
+    "In Progress": CircleDashed,
+    "Resolved": BadgeCheck,
+    "Closed": XCircle,
 };
 
 export const StatusCommon = ({ status, className }: StatusBadgeProps) => {
@@ -39,7 +39,6 @@ export const StatusCommon = ({ status, className }: StatusBadgeProps) => {
 
     return (
         <div
-
             className={cn(
                 "flex items-center gap-2 text-xs font-medium px-2 py-0.5 rounded-md",
                 className

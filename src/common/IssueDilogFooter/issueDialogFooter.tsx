@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { CommonLoader } from "../commonLoader";
 
 type FormMode = "add" | "edit" | "delete" | "view";
 
@@ -31,6 +32,7 @@ export const IssueDialogFooter = ({
         <div className="flex justify-end gap-3 py-1">
             {showCancel && (
                 <Button
+                    size={'sm'}
                     className="text-xs"
                     variant="outline"
                     onClick={onCancel}
@@ -43,12 +45,16 @@ export const IssueDialogFooter = ({
             {showConfirm && (
                 <div className="flex">
                     <Button
-                        className={`text-xs ${formMode === "add" ? "border" : ""}`}
+                        size={'sm'}
+                        className={`text-xs bg-indigo-700/80 text-white
+  dark:bg-indigo-500/60
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white ${formMode === "add" ? "border" : ""}`}
                         variant="outline"
                         onClick={onConfirm}
                         disabled={isLoading || confirmDisabled}
                     >
-                        {isLoading ? "Loading..." : confirmText}
+                        {isLoading ? <CommonLoader /> : confirmText}
                     </Button>
 
 

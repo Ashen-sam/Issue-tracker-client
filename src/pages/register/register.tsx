@@ -1,12 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRegisterMutation } from '@/services';
-import { AlertCircle, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { Bug, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import logo from '../../../public/logo-white.png';
-
 
 export const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -15,11 +13,6 @@ export const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     const navigate = useNavigate();
     const [register, { isLoading }] = useRegisterMutation();
@@ -69,21 +62,23 @@ export const Register = () => {
     };
 
     const handleSubmit = async () => {
-        setNameError('');
-        setEmailError('');
-        setPasswordError('');
-        setConfirmPasswordError('');
-
         const nameErr = validateName(fullName);
         const emailErr = validateEmail(email);
         const passwordErr = validatePassword(password);
         const confirmPasswordErr = validateConfirmPassword(password, confirmPassword);
 
-        if (nameErr) setNameError(nameErr);
-        if (emailErr) setEmailError(emailErr);
-        if (passwordErr) setPasswordError(passwordErr);
-        if (confirmPasswordErr) setConfirmPasswordError(confirmPasswordErr);
+        if (nameErr || emailErr || passwordErr || confirmPasswordErr) {
+            const errors = [];
+            if (nameErr) errors.push(nameErr);
+            if (emailErr) errors.push(emailErr);
+            if (passwordErr) errors.push(passwordErr);
+            if (confirmPasswordErr) errors.push(confirmPasswordErr);
 
+            toast.error('All fields are required', {
+                description: errors.join(', ')
+            });
+            return;
+        }
 
         try {
             await register({
@@ -91,7 +86,8 @@ export const Register = () => {
                 email: email.trim(),
                 password
             }).unwrap();
-
+            localStorage.setItem('userName', fullName.trim());
+            localStorage.setItem('userEmail', email.trim());
             toast.success('Account created successfully!', {
                 description: 'Please sign in to continue'
             });
@@ -113,11 +109,21 @@ export const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 py-12">
-            <div className="w-full max-w-sm">
+        <div className=" flex items-center justify-center p-4 py-12">
+            <div className="w-full max-w-75">
                 <div className="flex flex-col items-center mb-8">
-                    <img src={logo} width={180} height={160} alt="log" />
-                    <div className="text-2xl font-normal  ">
+                    <div className="relative flex items-center justify-center w-20 h-20 rounded-xl border border-dashed">
+                        <div
+                            className="absolute bottom-0 inset-0 rounded-xl dark:bg-white opacity-30 blur-lg"
+                            style={{
+                                background: 'radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 90%)',
+                            }}
+                        />
+
+                        <Bug size={40} className='text-zinc-600 dark:text-muted-foreground' />
+
+                    </div>
+                    <div className="text-2xl font-normal mt-4 ">
                         Create account
                     </div>
                 </div>
@@ -125,71 +131,44 @@ export const Register = () => {
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <Input
                                 id="fullName"
                                 type="text"
                                 placeholder="Full name"
                                 value={fullName}
-                                onChange={(e) => {
-                                    setFullName(e.target.value);
-                                    if (nameError) setNameError('');
-                                }}
+                                onChange={(e) => setFullName(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                className={`pl-10 h-12  ${nameError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                className="h-12"
                                 disabled={isLoading}
                             />
                         </div>
-                        {nameError && (
-                            <p className="text-sm text-red-600 flex items-center gap-1 pl-1">
-                                <AlertCircle className="h-3.5 w-3.5" />
-                                {nameError}
-                            </p>
-                        )}
                     </div>
 
                     <div className="space-y-2">
                         <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <Input
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email address..."
                                 value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    if (emailError) setEmailError('');
-                                }}
+                                onChange={(e) => setEmail(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                className={`pl-10 h-12  ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                className="h-12"
                                 disabled={isLoading}
                             />
                         </div>
-                        {emailError && (
-                            <p className="text-sm text-red-600 flex items-center gap-1 pl-1">
-                                <AlertCircle className="h-3.5 w-3.5" />
-                                {emailError}
-                            </p>
-                        )}
                     </div>
 
                     <div className="space-y-2">
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <Input
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="Create a password"
                                 value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                    if (passwordError) setPasswordError('');
-                                    if (confirmPassword && confirmPasswordError) {
-                                        setConfirmPasswordError('');
-                                    }
-                                }}
+                                onChange={(e) => setPassword(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                className={`pl-10 pr-10 h-12  ${passwordError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                className="pr-10 h-12"
                                 disabled={isLoading}
                             />
                             <button
@@ -206,33 +185,23 @@ export const Register = () => {
                                 )}
                             </button>
                         </div>
-                        {passwordError && (
-                            <p className="text-sm text-red-600 flex items-center gap-1 pl-1">
-                                <AlertCircle className="h-3.5 w-3.5" />
-                                {passwordError}
-                            </p>
-                        )}
-                        {!passwordError && password && (
-                            <p className="text-xs text-gray-500 pl-1">
+                        {password && (
+                            <div className="text-xs text-gray-500 pl-1">
                                 Must be 8+ characters with uppercase, lowercase, and number
-                            </p>
+                            </div>
                         )}
                     </div>
 
                     <div className="space-y-2">
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <Input
                                 id="confirmPassword"
                                 type={showConfirmPassword ? 'text' : 'password'}
                                 placeholder="Confirm your password"
                                 value={confirmPassword}
-                                onChange={(e) => {
-                                    setConfirmPassword(e.target.value);
-                                    if (confirmPasswordError) setConfirmPasswordError('');
-                                }}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                className={`pl-10 pr-10 h-12  ${confirmPasswordError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                                className="pr-10 h-12"
                                 disabled={isLoading}
                             />
                             <button
@@ -249,17 +218,12 @@ export const Register = () => {
                                 )}
                             </button>
                         </div>
-                        {confirmPasswordError && (
-                            <p className="text-sm text-red-600 flex items-center gap-1 pl-1">
-                                <AlertCircle className="h-3.5 w-3.5" />
-                                {confirmPasswordError}
-                            </p>
-                        )}
                     </div>
 
                     <Button
+                        variant={'outline'}
                         onClick={handleSubmit}
-                        className="w-full h-12 text-base font-medium  rounded-lg mt-6"
+                        className="w-full h-12 text-base font-medium dark:bg-indigo-500/60 bg-indigo-700/80 text-white   rounded-md mt-1"
                         disabled={isLoading}
                     >
                         {isLoading ? (

@@ -6,7 +6,8 @@ export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
+      const token =
+        (getState() as RootState).auth.token || localStorage.getItem("token");
 
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
@@ -15,6 +16,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User"],
-  endpoints: () => ({}), // injected later
+  tagTypes: ["User", "Issue", "Dashboard"],
+  endpoints: () => ({}),
 });

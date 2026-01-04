@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 
-export type IssuePriority = "LOW" | "MEDIUM" | "HIGH";
+export type IssuePriority = "Low" | "Medium" | "High" | "Critical";
 
 interface PriorityBadgeProps {
     priority: IssuePriority;
@@ -9,21 +9,24 @@ interface PriorityBadgeProps {
 }
 
 const iconStyles: Record<IssuePriority, string> = {
-    LOW: "text-green-400",
-    MEDIUM: "text-yellow-400",
-    HIGH: "text-red-400",
+    "Low": "text-green-400",
+    "Medium": "text-yellow-400",
+    "High": "text-red-400",
+    "Critical": "text-purple-600",
 };
 
 const priorityLabel: Record<IssuePriority, string> = {
-    LOW: "Low",
-    MEDIUM: "Medium",
-    HIGH: "High",
+    "Low": "Low",
+    "Medium": "Medium",
+    "High": "High",
+    "Critical": "Critical",
 };
 
 const priorityIcon: Record<IssuePriority, React.ElementType> = {
-    LOW: ArrowDown,
-    MEDIUM: Minus,
-    HIGH: ArrowUp,
+    "Low": ArrowDown,
+    "Medium": Minus,
+    "High": ArrowUp,
+    "Critical": ArrowUp, // can use same icon or choose another
 };
 
 export const PriorityCommon = ({ priority, className }: PriorityBadgeProps) => {

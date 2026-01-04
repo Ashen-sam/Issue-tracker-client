@@ -48,13 +48,20 @@ export const IssueDialog = ({
                 `}
             >
                 <div className="flex items-center justify-between px-4 py-2.5 bg-white/60 dark:bg-[#1a1a1a] backdrop-blur-xl">
-                    <div className="flex gap-3 items-center pt-3">
+                    <div className="flex gap-3  items-center pt-3">
+
                         {icon && (
-                            <div className="border bg-primary/10 rounded-sm p-2">
+                            <div className="border border-dashed relative bg-primary/10 rounded-sm p-2">
                                 {icon}
+                                <div
+                                    className="absolute inset-0 rounded-xl bg-white opacity-30 blur-lg"
+                                    style={{
+                                        background: 'radial-gradient(circle, rgba(255,255,255,0.5) 20%, transparent 90%)',
+                                    }}
+                                />
                             </div>
                         )}
-                        <div className="flex flex-col gap-[3px]">
+                        <div className="flex flex-col gap-0.75">
                             <DialogTitle className="text-sm font-medium text-gray-800 dark:text-gray-200">
                                 {title}
                             </DialogTitle>
@@ -73,7 +80,7 @@ export const IssueDialog = ({
                 </div>
 
                 {footer && (
-                    <div className="px-4 py-3 border-t-2 border-dashed border-zinc-300 dark:border-white/10 flex justify-end bg-white/50 dark:bg-[#1a1a1a] backdrop-blur-xl">
+                    <div className="px-4 py-3 border-t bg- border-dashed border-zinc-300 dark:border-white/10 flex justify-end bg-white/50 dark:bg-[#1a1a1a] backdrop-blur-xl">
                         {footer}
                     </div>
                 )}
