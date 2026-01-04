@@ -9,13 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 export const Sidebar = () => {
     const location = useLocation();
-    const { data: user, isLoading, error } = useGetCurrentUserQuery();
-
-    // Debug: Log the full user object
-    console.log('User data:', user);
-    console.log('Is Loading:', isLoading);
-    console.log('Error:', error);
-
+    const { data: user } = useGetCurrentUserQuery();
     const menuItems = [
         { id: 'dashboard', icon: House, label: 'Home' },
         { id: 'issues', icon: Layers2, label: 'My Issues' },
