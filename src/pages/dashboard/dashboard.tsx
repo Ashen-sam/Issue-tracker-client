@@ -1,22 +1,21 @@
-import { PriorityCommon, StatusCommon } from "@/common";
+import { InitialPage, PriorityCommon, SeverityCommon, StatusCommon } from "@/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetDashboardQuery } from "@/services/dashboardApi";
-import { CheckCircle2, Clock, Home, TrendingUp, AlertCircle } from "lucide-react";
+import { AlertCircle, Bug, CheckCircle2, Clock, Home, Plus, TrendingUp } from "lucide-react";
+import { useState } from "react";
 
 export const Dashboard = () => {
+    const [, setCreateOpen] = useState(false);
     const { data: dashboardData, isLoading, isError } = useGetDashboardQuery();
-
     if (isLoading) {
         return (
             <div className="">
                 <div className="flex items-center gap-2 text-sm px-3 py-[7.5px] border border-dashed rounded-md w-fit">
                     <Home size={14} /> Home
                 </div>
-
             </div>
         );
     }
-
     if (isError) {
         return (
             <div className="">
@@ -34,7 +33,6 @@ export const Dashboard = () => {
             </div>
         );
     }
-
     const stats = [
         {
             label: "In Progress",
@@ -55,13 +53,28 @@ export const Dashboard = () => {
             trend: "All time",
         },
     ];
-
     const recentIssues = [
         ...(dashboardData?.recentIssues.myIssues || []),
         ...(dashboardData?.recentIssues.assignedToMe || []),
     ]
         .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())
         .slice(0, 4);
+    const hasNoIssues = dashboardData?.userStats.myIssues === 0;
+    if (hasNoIssues) {
+        return (
+            <div className="w-full  flex items-center justify-center">
+                <InitialPage
+                    actionLink="/issues"
+                    icon={Bug}
+                    title="Welcome to Bug Track"
+                    description="Track bugs, feature requests, and improvements in one place. Create your first issue to get started."
+                    actionLabel="New Issue"
+                    actionIcon={Plus}
+                    onAction={() => setCreateOpen(true)}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="">
@@ -100,6 +113,7 @@ export const Dashboard = () => {
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <PriorityCommon priority={issue.priority} className="border shadow-xs" />
                                             <StatusCommon status={issue.status} className="border shadow-xs" />
+                                            <SeverityCommon severity={issue.severity} className="border shadow-xs" />
                                         </div>
                                         <div>
                                             <div className="text-sm text-foreground/80 leading-relaxed">

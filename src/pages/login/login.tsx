@@ -11,7 +11,6 @@ export const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [login, { isLoading }] = useLoginMutation();
@@ -80,7 +79,7 @@ export const Login = () => {
     };
 
     return (
-        <div className="  flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4">
             <div className="w-full max-w-75">
                 <div className="flex flex-col relative items-center mb-8">
                     <div className="relative flex items-center justify-center w-20 h-20 rounded-xl border border-dashed">
@@ -146,7 +145,10 @@ export const Login = () => {
                     <Button
                         type="submit"
                         variant={'outline'}
-                        className="w-full h-11 text-base font-medium dark:bg-indigo-500/60 bg-indigo-700/80 text-white   rounded-md"
+                        className="w-full h-11 text-base font-mediumbg-indigo-700/80 text-white
+  dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white  rounded-md"
                         disabled={isLoading}
                     >
                         {isLoading ? (

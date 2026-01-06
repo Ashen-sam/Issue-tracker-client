@@ -1,4 +1,4 @@
-import { PriorityCommon, StatusCommon } from '@/common';
+import { PriorityCommon, SeverityCommon, StatusCommon } from '@/common';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useGetIssueQuery } from '@/services/issueApi';
@@ -28,7 +28,7 @@ const CircularProgress = ({ value }: { value: number }) => {
                         cx="80"
                         cy="80"
                         r={radius}
-                        stroke="currentColor"
+                        stroke="#6F61D9"
                         strokeWidth="12"
                         fill="transparent"
                         strokeDasharray={circumference}
@@ -68,7 +68,6 @@ export const Overview = () => {
         if (!issue?.createdAt) return 0;
         const today = new Date();
         const createdDate = new Date(issue.createdAt);
-        // Calculate days since creation (you can modify this logic based on your needs)
         const diffTime = today.getTime() - createdDate.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
@@ -128,8 +127,8 @@ export const Overview = () => {
                                     <label className="text-xs font-semibold text-muted-foreground tracking-wide mb-2.5 block">
                                         Severity
                                     </label>
-                                    <div className="flex items-center gap-2 border shadow-xs px-2 text-xs font-medium py-1 rounded-sm">
-                                        <span>{issue.severity}</span>
+                                    <div className="flex items-center gap-2  shadow-xs px-2 text-xs font-medium py-1 rounded-sm">
+                                        <SeverityCommon severity={issue.severity} />
                                     </div>
                                 </div>
                                 {issue.createdAt && (
@@ -226,7 +225,6 @@ export const Overview = () => {
                                     </span>
                                 </div>
                                 <div>
-                                    <div className="text-sm font-medium">Reporter</div>
                                     <div className="text-xs text-muted-foreground">
                                         {issue.createdBy?.name || 'Unknown'}
                                     </div>

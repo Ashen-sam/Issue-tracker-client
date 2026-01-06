@@ -8,3 +8,4 @@ export * from "./initialPage";
 export * from "./IssueForm";
 export * from "./IssueDilogFooter";
 export * from "./commonLoader";
+export * from "./seveorityCommon";

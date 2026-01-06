@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { StatusCommon, type IssueStatus } from '../statusCommon';
 import { PriorityCommon, type IssuePriority } from '../priorityCommon';
+import { SeverityCommon, } from '../seveorityCommon';
+import type { IssueSeverity } from '@/services/issueApi';
 
 
 interface IssueFormProps {
@@ -13,6 +15,7 @@ interface IssueFormProps {
         description?: string;
         status?: IssueStatus;
         priority?: IssuePriority;
+        severity?: IssueSeverity
         createdAt?: string;
     };
     onSubmit?: (data: {
@@ -20,6 +23,7 @@ interface IssueFormProps {
         description: string;
         status: IssueStatus;
         priority: IssuePriority;
+        severity: IssueSeverity,
         createdAt: string;
     }) => void;
     onCancel?: () => void;
@@ -36,6 +40,7 @@ export const IssueForm = ({
         description: initialData?.description || '',
         status: initialData?.status || 'Open' as IssueStatus,
         priority: initialData?.priority || 'Medium' as IssuePriority,
+        severity: initialData?.severity || "" as IssueSeverity,
         createdAt: initialData?.createdAt || new Date().toISOString().split('T')[0]
     });
 
@@ -45,9 +50,13 @@ export const IssueForm = ({
 
     const [statusOpen, setStatusOpen] = useState(false);
     const [priorityOpen, setPriorityOpen] = useState(false);
+    const [seveorityOpen, setseveorityOpen] = useState(false);
+
 
     const statuses: IssueStatus[] = ["Open", "In Progress", "Resolved", "Closed"];
     const priorities: IssuePriority[] = ["Low", "Medium", "High"];
+    const severity: IssueSeverity[] = ["Minor", "Major", "Critical"];
+
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -152,28 +161,56 @@ export const IssueForm = ({
                         </PopoverContent>
                     </Popover>
                 </div>
-
                 <div className="space-y-1.5">
 
-                    <Popover>
+                    <Popover open={seveorityOpen} onOpenChange={setseveorityOpen}>
                         <PopoverTrigger asChild>
                             <button className="w-full px-3 py-2.5 text-sm text-left border rounded-md hover:border-gray-400 transition-colors flex items-center justify-between">
-                                <span className="text-gray-200">{formatDate(formData.createdAt)}</span>
-                                <CalendarIcon className="w-4 h-4 text-gray-200" />
+                                <SeverityCommon severity={formData.severity} />
+                                <ChevronDown className="w-4 h-4 text-gray-400" />
                             </button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={handleDateSelect}
-                                initialFocus
-                            />
+                        <PopoverContent className="w-50 p-2" align="start">
+                            <div className="space-y-1">
+                                <div className='px-3'>severity</div>
+                                {severity.map((severity) => (
+                                    <button
+                                        key={severity}
+                                        onClick={() => {
+                                            handleChange('severity', severity);
+                                            setseveorityOpen(false);
+                                        }}
+                                        className={cn(
+                                            "w-full py-2 text-left rounded-md hover:bg-zinc-700/20 transition-colors",
+                                            formData.severity === severity && ""
+                                        )}
+                                    >
+                                        <SeverityCommon severity={severity} />
+                                    </button>
+                                ))}
+                            </div>
                         </PopoverContent>
                     </Popover>
                 </div>
             </div>
-
+            <div className="space-y-1.5">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <button className="w-full px-3 py-2.5 text-sm text-left border rounded-md hover:border-gray-400 transition-colors flex items-center justify-between">
+                            <span className="">{formatDate(formData.createdAt)}</span>
+                            <CalendarIcon className="w-4 h-4 " />
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={handleDateSelect}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
             <div className="space-y-1.5">
                 <textarea
                     value={formData.description}

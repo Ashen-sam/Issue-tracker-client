@@ -13,7 +13,6 @@ export const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
     const navigate = useNavigate();
     const [register, { isLoading }] = useRegisterMutation();
 
@@ -219,11 +218,12 @@ export const Register = () => {
                             </button>
                         </div>
                     </div>
-
                     <Button
                         variant={'outline'}
                         onClick={handleSubmit}
-                        className="w-full h-12 text-base font-medium dark:bg-indigo-500/60 bg-indigo-700/80 text-white   rounded-md mt-1"
+                        className="w-full h-12 text-base font-medium dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60 text-white
+  hover:text-white dark:hover:text-white  rounded-md mt-1"
                         disabled={isLoading}
                     >
                         {isLoading ? (

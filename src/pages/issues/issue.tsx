@@ -1,12 +1,12 @@
 import { Layers, Layers2, LayersPlus, Pencil, Trash2 } from "lucide-react";
 import { Outlet } from "react-router-dom";
-
 import {
     InitialPage,
     IssueDialog,
     IssueDialogFooter,
     IssueForm,
     PriorityCommon,
+    SeverityCommon,
     StatusCommon,
 } from "@/common";
 import { CommonTable } from "@/common/commonTable";
@@ -64,6 +64,13 @@ export const Issue = () => {
             header: "Priority",
             render: (item: IIssue) => (
                 <PriorityCommon priority={item.priority} />
+            ),
+        },
+        {
+            key: "severity",
+            header: "severity",
+            render: (item: IIssue) => (
+                <SeverityCommon severity={item.severity} />
             ),
         },
         {
@@ -161,7 +168,6 @@ export const Issue = () => {
                     onCancel={() => setCreateOpen(false)}
                 />
             </IssueDialog>
-
             <IssueDialog
                 open={editOpen}
                 title="Edit Issue"
@@ -177,7 +183,7 @@ export const Issue = () => {
                             setEditOpen(false);
                             setCurrentIssue(null);
                         }}
-                        onConfirm={() => { }}
+                        onConfirm={() => currentFormData && handleEdit(currentFormData)}
                         confirmText="Save Changes"
                         isLoading={isLoading}
                         formMode="edit"
@@ -187,6 +193,7 @@ export const Issue = () => {
             >
                 <IssueForm
                     initialData={currentIssue || undefined}
+                    onFormDataChange={setCurrentFormData}
                     onSubmit={handleEdit}
                     onCancel={() => {
                         setEditOpen(false);
@@ -194,7 +201,6 @@ export const Issue = () => {
                     }}
                 />
             </IssueDialog>
-
             <IssueDialog
                 open={deleteOpen}
                 title="Delete Issue"
@@ -222,7 +228,6 @@ export const Issue = () => {
                     Are you sure you want to delete "<strong>{currentIssue?.title}</strong>"? This action cannot be undone.
                 </div>
             </IssueDialog>
-
             <IssueDialog
                 open={bulkDeleteOpen}
                 title="Delete Multiple Issues"

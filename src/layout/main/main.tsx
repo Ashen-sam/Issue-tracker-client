@@ -23,6 +23,7 @@ export const MainLayout = () => {
         navigate('/login');
     };
 
+
     const getUserInitials = () => {
         if (user?.name) {
             return user.name

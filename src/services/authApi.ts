@@ -20,6 +20,15 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+}
+
+export interface DeleteUserResponse {
+  msg: string;
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<AuthResponse, RegisterRequest>({
@@ -28,6 +37,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
     }),
 
     login: builder.mutation<AuthResponse, LoginRequest>({
@@ -36,14 +46,37 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
     }),
 
     getCurrentUser: builder.query<AuthResponse, void>({
       query: () => "/auth/me",
       providesTags: ["User"],
     }),
+
+    updateUser: builder.mutation<AuthResponse, UpdateUserRequest>({
+      query: (data) => ({
+        url: "/auth/me",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    deleteUser: builder.mutation<DeleteUserResponse, void>({
+      query: () => ({
+        url: "/auth/me",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGetCurrentUserQuery } =
-  authApi;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useGetCurrentUserQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} = authApi;
