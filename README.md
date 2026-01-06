@@ -1,4 +1,4 @@
-# TaskFlow – Project Management Web Application
+# Bug Track – Issue Tracker Web Application
 
 BugTrack is a modern issue tracking web application designed to provide a clean, efficient, and responsive experience for tracking issues, bugs, and project tasks. Users can create, update, and monitor issues seamlessly with an intuitive interface.
 Built with React (Vite + TypeScript) on the frontend and Node.js + Express + MongoDB on the backend, the system emphasizes speed, reliability, and an intuitive interface powered by optimistic UI updates for real-time feedback.
