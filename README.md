@@ -6,6 +6,7 @@ Built with a scalable architecture, BugTrack focuses on usability, performance, 
 
 ---
 
+
 ## Features
 
 - Create, update, and delete issues
@@ -41,4 +42,12 @@ Built with a scalable architecture, BugTrack focuses on usability, performance, 
 - MongoDB for flexible and scalable data storage
 - Render for backend deployment and hosting
 
----
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/Ashen-sam/Issue-tracker-client
+
+npm install
+
+
