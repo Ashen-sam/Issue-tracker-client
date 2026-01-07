@@ -84,7 +84,10 @@ export const MainLayout = () => {
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Avatar className="h-10 w-10 rounded-sm cursor-pointer hover:opacity-80  transition-opacity">
-                                        <AvatarFallback className=" dark:bg-indigo-500/50 bg-indigo-700/80 text-white  text-[13px]">
+                                        <AvatarFallback className=" bg-[#1475e1]/80 text-white
+        dark:bg-[#1475e1]/70
+        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
+        hover:text-white dark:hover:text-white font-semibold  text-[13px]">
                                             {getInitials(username)}
                                         </AvatarFallback>
                                     </Avatar>

@@ -116,10 +116,11 @@ export const Issue = () => {
                             <Button
                                 variant={'outline'}
                                 size={'sm'}
-                                className="inline-flex bg-indigo-700/80 text-white
-  dark:bg-indigo-500/60
-  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
-  hover:text-white dark:hover:text-white items-center gap-2  px-3 py-1.5 text-xs font-medium transition"
+                                className="inline-flex  bg-[#1475e1]/80 text-white
+        dark:bg-[#1475e1]/70
+        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
+        hover:text-white dark:hover:text-white
+         items-center gap-2  px-3 py-1.5 text-xs font-medium transition"
                                 onClick={() => setCreateOpen(true)}
                             >
                                 <LayersPlus size={15} />

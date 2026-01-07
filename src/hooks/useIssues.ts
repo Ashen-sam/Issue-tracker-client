@@ -77,6 +77,10 @@ export const useIssues = () => {
       toast.error("Description is required");
       return;
     }
+    if (!formData.severity.trim()) {
+      toast.error("severity is required");
+      return;
+    }
     setCreateOpen(false);
     setCurrentFormData(null);
 
@@ -108,6 +112,10 @@ export const useIssues = () => {
 
     if (!formData.title.trim()) {
       toast.error("Title is required");
+      return;
+    }
+    if (!formData.severity.trim()) {
+      toast.error("severity is required");
       return;
     }
     if (!formData.description.trim()) {

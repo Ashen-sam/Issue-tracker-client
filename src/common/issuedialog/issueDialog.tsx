@@ -50,14 +50,11 @@ export const IssueDialog = ({
                     <div className="flex gap-3  items-center pt-3">
 
                         {icon && (
-                            <div className="border border-dashed relative bg-primary/10 rounded-sm p-2">
+                            <div className="border border-dashed relative bg-[#1475e1]/90 text-white
+        dark:bg-[#1475e1]/30
+         rounded-sm p-2">
                                 {icon}
-                                <div
-                                    className="absolute inset-0 rounded-xl bg-white opacity-30 blur-lg"
-                                    style={{
-                                        background: 'radial-gradient(circle, rgba(255,255,255,0.5) 20%, transparent 90%)',
-                                    }}
-                                />
+
                             </div>
                         )}
                         <div className="flex flex-col gap-0.75">

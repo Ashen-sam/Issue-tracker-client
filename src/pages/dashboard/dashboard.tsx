@@ -97,7 +97,7 @@ export const Dashboard = () => {
                     icon={Bug}
                     title="Welcome to Bug Track"
                     description="Track bugs, feature requests, and improvements in one place. Create your first issue to get started."
-                    actionLabel="New Issue"
+                    actionLabel="Go to Issue"
                     actionIcon={Plus}
                     onAction={() => setCreateOpen(true)}
                 />
