@@ -75,10 +75,12 @@ export const Issue = () => {
             ),
         },
         {
-            key: "createdAt",
-            header: "Created At",
+            key: "Found date",
+            header: "Found date",
             render: (item: IIssue) => (
-                new Date(item.createdAt).toLocaleDateString()
+                item.foundDate
+                    ? new Date(item.foundDate).toLocaleDateString()
+                    : 'loading...'
             ),
         },
     ];

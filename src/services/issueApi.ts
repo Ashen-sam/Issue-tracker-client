@@ -18,6 +18,7 @@ export interface IIssue {
   createdBy: IUser;
   assignedTo?: IUser;
   resolvedAt?: string;
+  foundDate?: string;
   createdAt: string;
   updatedAt: string;
 }

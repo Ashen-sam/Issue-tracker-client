@@ -1,5 +1,5 @@
 import { AuthLayout, MainLayout } from '@/layout'
-import { Analytics, Dashboard, Issue, IssueTabs, Landing, Login, Overview, Register, Settings } from '@/pages'
+import { Dashboard, Issue, IssueTabs, Landing, Login, Overview, Register, Settings } from '@/pages'
 import { createBrowserRouter } from 'react-router-dom'
 
 export const router = createBrowserRouter([
@@ -44,10 +44,7 @@ export const router = createBrowserRouter([
                                 index: true,
                                 element: <Overview />
                             },
-                            {
-                                path: 'analytics',
-                                element: <Analytics />
-                            }
+
                         ]
                     }
                 ]

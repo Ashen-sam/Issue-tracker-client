@@ -3,7 +3,7 @@ import { useGetCurrentUserQuery } from '@/services';
 import {
     House,
     Layers2,
-    Settings
+    Settings2
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ export const Sidebar = () => {
     const menuItems = [
         { id: 'dashboard', icon: House, label: 'Home' },
         { id: 'issues', icon: Layers2, label: 'My Issues' },
-        { id: 'settings', icon: Settings, label: 'Settings' },
+        { id: 'settings', icon: Settings2, label: 'Settings' },
     ];
 
     const username = user?.user?.name || 'User';

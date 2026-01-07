@@ -16,6 +16,7 @@ interface IssueFormProps {
         priority?: IssuePriority;
         severity?: IssueSeverity
         createdAt?: string;
+        foundDate?: string;
     };
     onSubmit?: (data: {
         title: string;
@@ -24,6 +25,7 @@ interface IssueFormProps {
         priority: IssuePriority;
         severity: IssueSeverity,
         createdAt: string;
+        foundDate?: string;
     }) => void;
     onCancel?: () => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,12 +42,23 @@ export const IssueForm = ({
         status: initialData?.status || 'Open' as IssueStatus,
         priority: initialData?.priority || 'Medium' as IssuePriority,
         severity: initialData?.severity || "Minor" as IssueSeverity,
-        createdAt: initialData?.createdAt || new Date().toISOString().split('T')[0]
+        createdAt: initialData?.createdAt || new Date().toISOString().split('T')[0],
+        foundDate: initialData?.foundDate || new Date().toISOString().split('T')[0]
     });
 
-    const [date, setDate] = useState<Date>(
-        initialData?.createdAt ? new Date(initialData.createdAt) : new Date()
+
+    const [foundDate, setFoundDate] = useState<Date>(
+        initialData?.foundDate ? new Date(initialData.foundDate) : new Date()
     );
+
+    const handleFoundDateSelect = (selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            const adjustedDate = new Date(selectedDate);
+            adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset());
+            setFoundDate(adjustedDate);
+            handleChange('foundDate', adjustedDate.toISOString().split('T')[0]);
+        }
+    };
 
     const [statusOpen, setStatusOpen] = useState(false);
     const [priorityOpen, setPriorityOpen] = useState(false);
@@ -64,12 +77,7 @@ export const IssueForm = ({
         }));
     };
 
-    const handleDateSelect = (selectedDate: Date | undefined) => {
-        if (selectedDate) {
-            setDate(selectedDate);
-            handleChange('createdAt', selectedDate.toISOString().split('T')[0]);
-        }
-    };
+
 
     useEffect(() => {
         if (onFormDataChange) {
@@ -196,15 +204,15 @@ export const IssueForm = ({
                 <Popover>
                     <PopoverTrigger asChild>
                         <button className="w-full px-3 py-2.5 text-sm text-left border rounded-md hover:border-gray-400 transition-colors flex items-center justify-between">
-                            <span className="">{formatDate(formData.createdAt)}</span>
-                            <CalendarIcon className="w-4 h-4 " />
+                            <span className="">Found: {formatDate(formData.foundDate || formData.createdAt)}</span>
+                            <CalendarIcon className="w-4 h-4" />
                         </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                             mode="single"
-                            selected={date}
-                            onSelect={handleDateSelect}
+                            selected={foundDate}
+                            onSelect={handleFoundDateSelect}
                             initialFocus
                         />
                     </PopoverContent>

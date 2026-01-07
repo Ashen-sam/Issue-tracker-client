@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import {
-    AlertTriangle,
-    Flame,
-    MinusCircle,
+    CircleAlert,
+    ClockAlert,
+    MinusCircle
 } from "lucide-react";
 
 export type IssueSeverity = "Minor" | "Major" | "Critical";
@@ -14,8 +14,8 @@ interface SeverityBadgeProps {
 
 const severityStyles: Record<IssueSeverity, string> = {
     "Minor": "text-blue-400",
-    "Major": "text-orange-500",
-    "Critical": "text-red-500",
+    "Major": "text-orange-400",
+    "Critical": "text-red-400",
 };
 
 const severityLabel: Record<IssueSeverity, string> = {
@@ -26,8 +26,8 @@ const severityLabel: Record<IssueSeverity, string> = {
 
 const severityIcon: Record<IssueSeverity, React.ElementType> = {
     "Minor": MinusCircle,
-    "Major": AlertTriangle,
-    "Critical": Flame,
+    "Major": ClockAlert,
+    "Critical": CircleAlert,
 };
 
 export const SeverityCommon = ({ severity, className }: SeverityBadgeProps) => {

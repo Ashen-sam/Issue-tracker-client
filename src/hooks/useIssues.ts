@@ -24,6 +24,7 @@ interface IssueFormData {
   priority: IssuePriority;
   severity: IssueSeverity;
   createdAt?: string;
+  foundDate?: string;
 }
 
 export const useIssues = () => {
@@ -128,6 +129,7 @@ export const useIssues = () => {
         status: formData.status,
         severity: formData.severity,
         priority: formData.priority,
+        foundDate: formData.foundDate,
       }).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -172,6 +174,7 @@ export const useIssues = () => {
           status: formData.status,
           severity: formData.severity,
           priority: formData.priority,
+          foundDate: formData.foundDate,
         },
       }).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

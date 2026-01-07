@@ -1,4 +1,4 @@
-import { Bolt, ChartLine } from "lucide-react";
+import { Bolt } from "lucide-react";
 import { useRef, useState } from 'react';
 import { NavLink, Outlet } from "react-router-dom";
 
@@ -27,8 +27,7 @@ export const IssueTabs = () => {
         setHoverStyle({ opacity: 0 });
     };
     const tabsConfig = [
-        { to: "", icon: Bolt, label: "Details" },
-        { to: "analytics", icon: ChartLine, label: "Analytics" },
+        { to: "", icon: Bolt, label: "Overview" },
     ];
 
     return (

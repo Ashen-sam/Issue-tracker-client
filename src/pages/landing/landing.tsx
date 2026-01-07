@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import type { Variants } from 'framer-motion';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
     BarChart3,
     Bell,
@@ -8,14 +8,15 @@ import {
     Clock,
     GitBranch,
     Layers,
+    Menu,
     Target,
     TrendingUp,
-    Zap,
-    Menu,
-    X
+    X,
+    Zap
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+
 
 export const Landing = () => {
     const [scrollY, setScrollY] = useState(0);
@@ -187,6 +188,14 @@ export const Landing = () => {
         }, 300);
     };
 
+    const handleDesktopLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault();
+        const element = document.querySelector(href);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     const handleButtonClick = () => {
         setIsMobileMenuOpen(false);
     };
@@ -204,26 +213,43 @@ export const Landing = () => {
                         }`}>
                     <div className="relative max-w-[1100px] mx-auto px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-black border border-dashed p-2 rounded-sm dark:text-white">
-                            <Bug className=' size={40} className="relative text-zinc-600 dark:text-zinc-200' />
-
+                            <Bug className="w-10 h-10 relative text-zinc-600 dark:text-zinc-200" />
                         </div>
                         <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
-                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                            <a
+                                href="#features"
+                                onClick={(e) => handleDesktopLinkClick(e, '#features')}
+                                className="transition-colors hover:text-black dark:hover:text-white cursor-pointer"
+                            >
                                 Features
                             </a>
-                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                            <a
+                                href="#method"
+                                onClick={(e) => handleDesktopLinkClick(e, '#method')}
+                                className="transition-colors hover:text-black dark:hover:text-white cursor-pointer"
+                            >
                                 Method
                             </a>
-                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                            <a
+                                href="#customers"
+                                onClick={(e) => handleDesktopLinkClick(e, '#customers')}
+                                className="transition-colors hover:text-black dark:hover:text-white cursor-pointer"
+                            >
                                 Customers
                             </a>
                         </div>
-                        <div className="flex items-center ">
+                        <div className="flex items-center gap-2">
                             <button className="hidden sm:flex text-sm text-black hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-colors">
-                                <Link to="/login">Log in</Link>
+                                <Link to={'login'}>
+                                    Log in
+
+                                </Link>
                             </button>
-                            <Button size={'sm'} variant={'default'} >
-                                <Link to="/login">Sign up</Link>
+                            <Button size="sm" variant="default">
+                                <Link to={'register'}>
+                                    Sign up
+
+                                </Link>
                             </Button>
 
                             <motion.button
@@ -320,20 +346,13 @@ export const Landing = () => {
                                                     className="w-full justify-center"
                                                     onClick={handleButtonClick}
                                                 >
-                                                    <Link to={'login'}>
-                                                        Log in
-
-                                                    </Link>
+                                                    Log in
                                                 </Button>
                                                 <Button
                                                     className="w-full justify-center bg-indigo-700/80 text-white dark:bg-indigo-500/60 hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60 hover:text-white dark:hover:text-white"
                                                     onClick={handleButtonClick}
                                                 >
-
-                                                    <Link to={'login'}>
-                                                        Start building
-
-                                                    </Link>
+                                                    Start building
                                                 </Button>
                                             </motion.div>
                                         </div>
@@ -382,17 +401,20 @@ export const Landing = () => {
                             transition={{ duration: 0.8, delay: 0.4 }}
                             className="mt-10 flex items-center justify-center gap-4"
                         >
-                            <Button className=" h-11  text-white
-        border px-4 py-2 text-sm font-medium
-        dark:bg-indigo-500/60 bg-indigo-700/80hover:opacity-90">
-                                <Link to="/register">Start building</Link>
+                            <Button className="h-11 text-white border px-4 py-2 text-sm font-medium dark:bg-indigo-500/60 bg-indigo-700/80 hover:opacity-90">
+                                <Link to={'login'}>
+                                    Start building
+                                </Link>
                             </Button>
 
                             <Button
                                 variant="ghost"
                                 className="px-6 h-11 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
                             >
-                                <Link to="/register">Register</Link>
+                                <Link to={'register'}>
+                                    Register
+
+                                </Link>
                             </Button>
                         </motion.div>
                     </div>
@@ -529,7 +551,10 @@ export const Landing = () => {
                             </div>
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button className="bg-indigo-700/80 text-white dark:bg-indigo-500/60 hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60 hover:text-white dark:hover:text-white">
-                                    Get started for free
+                                    <Link to={'login'}>
+                                        Get started for free
+
+                                    </Link>
                                 </Button>
                             </motion.div>
                         </div>

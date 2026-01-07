@@ -1,9 +1,11 @@
 import { CommonLoader, InitialPage, PriorityCommon, SeverityCommon, StatusCommon } from "@/common";
 import { InteractivePieChart } from "@/common/InteractivePieChart";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetDashboardQuery } from "@/services/dashboardApi";
-import { AlertCircle, Bug, CheckCircle2, Clock, Home, Plus, TrendingUp } from "lucide-react";
+import { AlertCircle, Bug, CheckCircle2, Clock, Home, Layers, Plus, TrendingUp } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const COLORS = {
     status: {
@@ -27,6 +29,7 @@ const COLORS = {
 
 export const Dashboard = () => {
     const [, setCreateOpen] = useState(false);
+    const navigate = useNavigate()
     const { data: dashboardData, isLoading, isError } = useGetDashboardQuery();
 
     if (isLoading) {
@@ -148,37 +151,52 @@ export const Dashboard = () => {
                         centerLabel="Issues"
                         className="shadow-none rounded-sm dark:bg-[#1a1a1a] border"
                     />
-                    {/* Recent Issues */}
-                    <div className="shadow-none p-3 rounded-sm dark:bg-[#1a1a1a] border">
-                        <div className="text-sm font-semibold ">Recent Issues</div>
-                        <div className="p-2">
-                            {recentIssues.length > 0 ? (
-                                <div className=" ">
-                                    {recentIssues.map((issue) => (
-                                        <div key={issue._id} className=" border-b py-2   last:border-b-0 last:pb-0">
-                                            <div className=" items-start gap-3">
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="text-sm text-foreground/90 p-2 line-clamp-2">
-                                                        {issue.title}
-                                                    </div>
-                                                    {issue?.assignedTo?.name && (
-                                                        <div className="text-xs text-muted-foreground mt-1">
-                                                            Assigned to {issue.assignedTo?.name}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="flex items-center gap-2 flex-wrap">
-                                                    <PriorityCommon priority={issue.priority} className="border " />
-                                                    <StatusCommon status={issue.status} className="border" />
-                                                    <SeverityCommon severity={issue.severity} className="border" />
-                                                </div>
+                    <div className="shadow-none p-4 rounded-lg dark:bg-[#1a1a1a] bg-white border">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="text-sm font-semibold">Recent Issues</div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => navigate('/issues')}
+                                className="text-xs hover:text-primary transition-colors"
+                            >
+                                View All →
+                            </Button>
+                        </div>
 
+                        <div className="space-y-2">
+                            {recentIssues.length > 0 ? (
+                                recentIssues.slice(0, 4).map((issue) => (
+                                    <div
+                                        key={issue._id}
+                                        className="p-3 rounded-md border dark:border-zinc-800 border-zinc-200 dark:hover:bg-zinc-800/50 hover:bg-zinc-50 transition-colors cursor-pointer group"
+                                        onClick={() => navigate(`/issues/${issue._id}`)}
+                                    >
+                                        <div className="space-y-2">
+                                            <div className="text-sm px-2  text-foreground/90 line-clamp-1 group-hover:text-primary transition-colors">
+                                                {issue.title}
                                             </div>
+
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <StatusCommon status={issue.status} />
+                                                <PriorityCommon priority={issue.priority} />
+                                                <SeverityCommon severity={issue.severity} />
+                                            </div>
+
+                                            {issue?.assignedTo?.name && (
+                                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-400"></div>
+                                                    Assigned to <span className="font-medium">{issue.assignedTo.name}</span>
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))
                             ) : (
-                                <div className="text-center py-8 text-muted-foreground text-sm">
+                                <div className="text-center py-12 text-muted-foreground text-sm">
+                                    <div className="mb-2 opacity-50">
+                                        <Layers size={32} className="mx-auto" />
+                                    </div>
                                     No recent issues found
                                 </div>
                             )}

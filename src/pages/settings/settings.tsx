@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { logout, useDeleteUserMutation, useGetCurrentUserQuery, useUpdateUserMutation } from "@/services";
-import { AlertTriangle, Trash2, User } from "lucide-react";
+import { AlertTriangle, Settings2, Trash2, User } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -55,17 +55,17 @@ export const Settings = () => {
 
     return (
         <>
-            <div className="max-w-2xl mx-auto p-6">
-                <div className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
-                    Account Settings
+            <div className=" ">
+                <div className="flex items-center gap-2 text-sm px-3 py-2 border border-dashed rounded-md w-fit mb-4">
+                    <Settings2 size={14} /> Settings
                 </div>
 
-                <div className="space-y-4">
-                    <Card className=" rounded-lg p-6 backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40">
+                <div className="space-y-4 max-w-2xl mx-auto ">
+                    <Card className=" rounded-lg shadow-none p-6 backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                                    <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                                    <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                                 </div>
                                 <div>
                                     <div className="text-lg font-medium text-gray-800 dark:text-gray-200">
