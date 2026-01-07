@@ -39,7 +39,7 @@ export const IssueForm = ({
         description: initialData?.description || '',
         status: initialData?.status || 'Open' as IssueStatus,
         priority: initialData?.priority || 'Medium' as IssuePriority,
-        severity: initialData?.severity || "" as IssueSeverity,
+        severity: initialData?.severity || "Minor" as IssueSeverity,
         createdAt: initialData?.createdAt || new Date().toISOString().split('T')[0]
     });
 
@@ -91,7 +91,7 @@ export const IssueForm = ({
                     value={formData.title}
                     onChange={(e) => handleChange('title', e.target.value)}
                     className="w-full text-sm px-3 py-2.5 border rounded-md focus:outline-none focus:border-gray-400 "
-                    placeholder="Enter issue title"
+                    placeholder="Enter issue title *"
                     autoFocus
                 />
             </div>
@@ -171,7 +171,7 @@ export const IssueForm = ({
                         </PopoverTrigger>
                         <PopoverContent className="w-50 p-2" align="start">
                             <div className="space-y-1">
-                                <div className='px-3'>severity</div>
+                                <div className='px-3'>severity *</div>
                                 {severity.map((severity) => (
                                     <button
                                         key={severity}
@@ -216,7 +216,7 @@ export const IssueForm = ({
                     onChange={(e) => handleChange('description', e.target.value)}
                     rows={4}
                     className="w-full text-sm px-3 py-2.5 border rounded-md focus:outline-none focus:border-gray-400  resize-none"
-                    placeholder="Add a description..."
+                    placeholder="Add a description *"
                 />
             </div>
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { toast } from "sonner";
 
 import {
+  showToast,
   type IssuePriority,
   type IssueSeverity,
   type IssueStatus,
@@ -53,7 +53,6 @@ export const useIssues = () => {
 
   const [currentIssue, setCurrentIssue] = useState<IIssue | null>(null);
 
-  // Filter issues for current user
   const issues = currentUser
     ? (issuesData?.issues || []).filter((issue) => {
         const creatorId = issue.createdBy?._id || issue.createdBy?.id;
@@ -61,32 +60,66 @@ export const useIssues = () => {
       })
     : [];
 
-  // Show error toast if issues failed to load
   if (issuesError) {
-    toast.error("Failed to load issues", {
-      description: "Please refresh the page to try again.",
-    });
+    showToast.error("Something went wrong", "Please try again");
   }
+  const handleExportCSV = () => {
+    const dataToExport =
+      selectedIssues.length > 0
+        ? issues.filter((issue) => selectedIssues.includes(issue._id))
+        : issues;
 
+    if (dataToExport.length === 0) return;
+
+    const headers = ["Title", "Status", "Priority", "Severity", "Created At"];
+
+    const rows = dataToExport.map((issue) => [
+      `"${issue.title.replace(/"/g, '""')}"`,
+      issue.status,
+      issue.priority,
+      issue.severity,
+      new Date(issue.createdAt).toLocaleDateString(),
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+
+    const filename =
+      selectedIssues.length > 0
+        ? `issues_selected_${new Date().toISOString().split("T")[0]}.csv`
+        : `issues_all_${new Date().toISOString().split("T")[0]}.csv`;
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const handleCreate = async (formData: IssueFormData) => {
     if (!formData.title.trim()) {
-      toast.error("Title is required");
+      showToast.error("Title is required");
       return;
     }
     if (!formData.description.trim()) {
-      toast.error("Description is required");
+      showToast.error("Description is required");
       return;
     }
     if (!formData.severity.trim()) {
-      toast.error("severity is required");
+      showToast.error("severity is required");
       return;
     }
     setCreateOpen(false);
     setCurrentFormData(null);
 
-    toast.success("Issue created", {
-      description: `"${formData.title}" has been added.`,
-    });
+    showToast.success("Issue created", `"${formData.title}" has been added.`);
 
     try {
       await createIssue({
@@ -98,28 +131,29 @@ export const useIssues = () => {
       }).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error("Failed to create issue", {
-        description: error?.data?.message || "Something went wrong",
-      });
+      showToast.error(
+        "Failed to create issue",
+        error?.data?.message || "Something went wrong"
+      );
     }
   };
 
   const handleEdit = async (formData: IssueFormData) => {
     if (!currentIssue) {
-      toast.error("No issue selected");
+      showToast.error("No issue selected");
       return;
     }
 
     if (!formData.title.trim()) {
-      toast.error("Title is required");
+      showToast.error("Title is required");
       return;
     }
     if (!formData.severity.trim()) {
-      toast.error("severity is required");
+      showToast.error("severity is required");
       return;
     }
     if (!formData.description.trim()) {
-      toast.error("Description is required");
+      showToast.error("Description is required");
       return;
     }
 
@@ -127,9 +161,7 @@ export const useIssues = () => {
     setCurrentIssue(null);
     setCurrentFormData(null);
 
-    toast.success("Issue updated", {
-      description: `"${formData.title}" has been updated.`,
-    });
+    showToast.success("Issue created", `"${formData.title}" has been added.`);
 
     try {
       await updateIssue({
@@ -144,15 +176,16 @@ export const useIssues = () => {
       }).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error("Failed to update issue", {
-        description: error?.data?.message || "Something went wrong",
-      });
+      showToast.error(
+        "Failed to update issue",
+        error?.data?.message || "Something went wrong"
+      );
     }
   };
 
   const handleDelete = async () => {
     if (!currentIssue) {
-      toast.error("No issue selected");
+      showToast.error("No issue selected");
       return;
     }
 
@@ -160,10 +193,7 @@ export const useIssues = () => {
     const issueIdToDelete = currentIssue._id;
     setDeleteOpen(false);
     setCurrentIssue(null);
-
-    toast.success("Issue deleted", {
-      description: `"${issueTitle}" has been removed.`,
-    });
+    showToast.success("Issue deleted", `"${issueTitle}" has been removed.`);
 
     if (issueId === issueIdToDelete) {
       navigate("/issues");
@@ -173,15 +203,16 @@ export const useIssues = () => {
       await deleteIssue(issueIdToDelete).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error("Failed to delete issue", {
-        description: error?.data?.message || "Something went wrong",
-      });
+      showToast.error(
+        "Failed to delete issues",
+        error?.data?.message || "Something went wrong"
+      );
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedIssues.length === 0) {
-      toast.error("No issues selected");
+      showToast.error("No issues selected");
       return;
     }
 
@@ -191,9 +222,10 @@ export const useIssues = () => {
     setBulkDeleteOpen(false);
     setSelectedIssues([]);
 
-    toast.success(`${deleteCount} issue${deleteCount > 1 ? "s" : ""} deleted`, {
-      description: "The selected issues have been removed.",
-    });
+    showToast.success(
+      `${deleteCount} issue${deleteCount > 1 ? "s" : ""} deleted`,
+      "The selected issues have been removed."
+    );
 
     if (issueId && issuesToDelete.includes(issueId)) {
       navigate("/issues");
@@ -206,9 +238,10 @@ export const useIssues = () => {
       await Promise.all(deletePromises);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error("Failed to delete issues", {
-        description: error?.data?.message || "Something went wrong",
-      });
+      showToast.error(
+        "Failed to delete issues",
+        error?.data?.message || "Something went wrong"
+      );
     }
   };
 
@@ -293,5 +326,6 @@ export const useIssues = () => {
     handleSelectionChange,
     setCurrentIssue,
     setSelectedIssues,
+    handleExportCSV,
   };
 };

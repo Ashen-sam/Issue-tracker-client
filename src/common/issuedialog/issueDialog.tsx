@@ -50,8 +50,8 @@ export const IssueDialog = ({
                     <div className="flex gap-3  items-center pt-3">
 
                         {icon && (
-                            <div className="border border-dashed relative bg-[#1475e1]/90 text-white
-        dark:bg-[#1475e1]/30
+                            <div className="border border-dashed relative dark:bg-indigo-500/40 text-white bg-indigo-700/70
+  
          rounded-sm p-2">
                                 {icon}
 

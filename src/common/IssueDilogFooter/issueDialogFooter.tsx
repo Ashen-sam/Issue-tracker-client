@@ -46,10 +46,9 @@ export const IssueDialogFooter = ({
                 <div className="flex">
                     <Button
                         size={'sm'}
-                        className={`text-xs bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
-        hover:text-white dark:hover:text-white ${formMode === "add" ? "border" : ""}`}
+                        className={`text-xs dark:bg-indigo-500/60 text-white bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white  ${formMode === "add" ? "border" : ""}`}
                         variant="outline"
                         onClick={onConfirm}
                         disabled={isLoading || confirmDisabled}

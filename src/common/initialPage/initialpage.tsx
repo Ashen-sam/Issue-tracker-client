@@ -46,12 +46,11 @@ export const InitialPage = ({
                     <Button
                         variant="outline"
                         className="
-        mt-2 inline-flex items-center gap-2 rounded-md
+        mt-2 inline-flex items-center gap-2 rounded-md text-white
         border px-4 py-2 text-sm font-medium
-        bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
-        hover:text-white dark:hover:text-white
+        dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white 
         transition
       "
                         asChild
@@ -65,12 +64,11 @@ export const InitialPage = ({
                     <Button
                         variant="outline"
                         className="
-        mt-2 inline-flex items-center gap-2 rounded-md
+        mt-2 inline-flex items-center gap-2 rounded-md text-white
         border px-4 py-2 text-sm font-medium
-        bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
-        hover:text-white dark:hover:text-white
+        dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white 
         transition
       "
                         onClick={onAction}

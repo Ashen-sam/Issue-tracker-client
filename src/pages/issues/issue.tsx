@@ -1,4 +1,4 @@
-import { Layers, Layers2, LayersPlus, Pencil, Trash2 } from "lucide-react";
+import { Layers, Layers2, LayersPlus, Pencil, Trash2, Upload } from "lucide-react";
 import { Outlet } from "react-router-dom";
 import {
     CommonLoader,
@@ -38,6 +38,7 @@ export const Issue = () => {
         handleDelete,
         handleBulkDelete,
         handleViewIssue,
+        handleExportCSV,
         handleEditIssue,
         handleDeleteIssue,
         handleSelectionChange,
@@ -116,10 +117,9 @@ export const Issue = () => {
                             <Button
                                 variant={'outline'}
                                 size={'sm'}
-                                className="inline-flex  bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
-        hover:text-white dark:hover:text-white
+                                className="inline-flex text-white  dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white 
          items-center gap-2  px-3 py-1.5 text-xs font-medium transition"
                                 onClick={() => setCreateOpen(true)}
                             >
@@ -134,6 +134,17 @@ export const Issue = () => {
                                 disabled={selectedIssues.length === 0}
                             >
                                 <Trash2 size={15} />
+                            </Button>
+
+                            <Button
+                                size={'sm'}
+                                variant={'outline'}
+                                className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium transition"
+                                onClick={handleExportCSV}
+                                disabled={selectedIssues.length === 0}
+                            >
+                                <Upload size={15} />
+                                {selectedIssues.length > 0 && `(${selectedIssues.length})`}
                             </Button>
                         </div>
                         <CommonTable

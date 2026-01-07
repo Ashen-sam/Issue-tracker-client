@@ -241,7 +241,7 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
 
             <div className="rounded-md overflow-x-auto border">
                 <Table className="w-full min-w-150 table-auto">
-                    <TableHeader className="border-b border-gray-700">
+                    <TableHeader className="border-b border-gray-700 ">
                         <TableRow>
                             {enableCheckbox && (
                                 <TableHead className="w-12 px-4 py-3">
@@ -254,14 +254,14 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
                             {columns.map((column, index) => (
                                 <TableHead
                                     key={index}
-                                    className="text-left text-xs font-semibold text-gray-400 tracking-wider px-4 py-3"
+                                    className="text-left text-xs font-semibold dark:text-gray-400 text-zinc-700 tracking-wider px-4 py-3"
                                     style={column.width ? { width: column.width } : undefined}
                                 >
                                     {column.header}
                                 </TableHead>
                             ))}
                             {(onView || onEdit || onDelete) && (
-                                <TableHead className="w-16 px-4 py-3 text-center">
+                                <TableHead className="w-16 px-4 text-xs py-3 dark:text-gray-400 text-zinc-700 text-center">
                                     Actions
                                 </TableHead>
                             )}
@@ -312,7 +312,7 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
                                                         <MoreHorizontal className='text-zinc-400' />
                                                     </Button>
                                                 </PopoverTrigger>
-                                                <PopoverContent className="w-30 p-1" align="end">
+                                                <PopoverContent className="w-30 p-1 " align="end">
                                                     <div className="flex flex-col">
                                                         {onView && (
                                                             <Button

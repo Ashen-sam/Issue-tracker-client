@@ -18,8 +18,6 @@ import { AlertCircle, TrendingUp } from "lucide-react";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
-
-
 export const Analytics = () => {
     const { data: analytics, isLoading, error, isError } = useGetGeneralAnalyticsQuery();
 
@@ -77,7 +75,7 @@ export const Analytics = () => {
                     </div>
                     {error && (
                         <div className="mt-4 p-4 bg-destructive/10 rounded-lg text-xs text-left">
-                            <p className="font-semibold mb-2 text-destructive">Error Details:</p>
+                            <div className="font-semibold mb-2 text-destructive">Error Details:</div>
                             <pre className="overflow-auto whitespace-pre-wrap wrap-break-word">
                                 {JSON.stringify(error, null, 2)}
                             </pre>

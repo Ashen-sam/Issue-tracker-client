@@ -4,7 +4,7 @@ import { useRegisterMutation } from '@/services';
 import { Bug, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { showToast } from '@/common';
 
 export const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -73,9 +73,7 @@ export const Register = () => {
             if (passwordErr) errors.push(passwordErr);
             if (confirmPasswordErr) errors.push(confirmPasswordErr);
 
-            toast.error('All fields are required', {
-                description: errors.join(', ')
-            });
+            showToast.error('All fields are required', errors.join(', '));
             return;
         }
 
@@ -87,16 +85,12 @@ export const Register = () => {
             }).unwrap();
             localStorage.setItem('userName', fullName.trim());
             localStorage.setItem('userEmail', email.trim());
-            toast.success('Account created successfully!', {
-                description: 'Please sign in to continue'
-            });
+            showToast.success('Account created successfully!', 'Please sign in to continue');
 
             navigate('/login');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            toast.error('Registration failed', {
-                description: err?.data?.message || 'Please try again with different credentials'
-            });
+            showToast.error('Registration failed', err?.data?.message || 'Please try again with different credentials');
             console.error('Registration failed:', err);
         }
     };

@@ -5,7 +5,7 @@ import { Bug, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { showToast } from '@/common';
 
 export const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -47,9 +47,7 @@ export const Login = () => {
             if (emailErr) errors.push(emailErr);
             if (passwordErr) errors.push(passwordErr);
 
-            toast.error('All fields are required', {
-                description: errors.join(', ')
-            });
+            showToast.error('All fields are required', errors.join(', '));
             return;
         }
 
@@ -57,16 +55,12 @@ export const Login = () => {
             const result = await login({ email, password }).unwrap();
             dispatch(setCredentials(result));
             localStorage.setItem('vite-ui-theme', 'system');
-            toast.success('Login successful!', {
-                description: 'Welcome back to your dashboard'
-            });
+            showToast.success('Login successful!', 'Welcome back to your dashboard');
 
             navigate('/dashboard');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            toast.error('Login failed', {
-                description: err?.data?.message || 'Please check your credentials and try again'
-            });
+            showToast.error('Login failed', err?.data?.message || 'Please check your credentials and try again');
             console.error('Login failed:', err);
         }
     };

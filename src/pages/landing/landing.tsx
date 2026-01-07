@@ -203,8 +203,9 @@ export const Landing = () => {
                         : 'bg-transparent'
                         }`}>
                     <div className="relative max-w-[1100px] mx-auto px-6 py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-black dark:text-white">
-                            <Bug className="w-5 h-5" />
+                        <div className="flex items-center gap-2 text-black border border-dashed p-2 rounded-sm dark:text-white">
+                            <Bug className=' size={40} className="relative text-zinc-600 dark:text-zinc-200' />
+
                         </div>
                         <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
                             <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
@@ -344,16 +345,17 @@ export const Landing = () => {
                 </AnimatePresence>
                 <section className="relative pt-40 pb-32 px-6 overflow-hidden">
                     <div className="max-w-5xl mx-auto text-center">
+
                         <motion.h1
                             initial={{ opacity: 0, y: 24 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             className="text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight leading-[1.08] text-black dark:text-white"
                         >
-                            <span className="relative font-semibold">
+                            <span className="relative font-semibold italic">
                                 BugTrack
                                 <span
-                                    className="absolute inset-0 -z-10 blur-xl opacity-40"
+                                    className="absolute inset-0 blur-xl opacity-40"
                                     style={{
                                         background:
                                             "radial-gradient(circle at center, rgba(255,255,255,0.6), transparent 70%)",
@@ -380,7 +382,9 @@ export const Landing = () => {
                             transition={{ duration: 0.8, delay: 0.4 }}
                             className="mt-10 flex items-center justify-center gap-4"
                         >
-                            <Button className="px-6 h-11 bg-black text-white dark:bg-white dark:text-black hover:opacity-90">
+                            <Button className=" h-11  text-white
+        border px-4 py-2 text-sm font-medium
+        dark:bg-indigo-500/60 bg-indigo-700/80hover:opacity-90">
                                 <Link to="/register">Start building</Link>
                             </Button>
 
@@ -456,9 +460,9 @@ export const Landing = () => {
                                     <h3 className="text-base font-medium mb-2 text-black dark:text-white">
                                         {workflow.title}
                                     </h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
                                         {workflow.description}
-                                    </p>
+                                    </div>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -499,9 +503,9 @@ export const Landing = () => {
                                     <h3 className="text-base font-medium mb-2 text-black dark:text-white">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
                                         {feature.description}
-                                    </p>
+                                    </div>
                                 </motion.div>
                             ))}
                         </motion.div>
@@ -520,9 +524,9 @@ export const Landing = () => {
                             <h2 className="text-3xl md:text-4xl font-medium mb-4 text-black dark:text-white">
                                 Ready to streamline your workflow?
                             </h2>
-                            <p className="text-base mb-8 text-gray-600 dark:text-gray-400 max-w-150 mx-auto">
+                            <div className="text-base mb-8 text-gray-600 dark:text-gray-400 max-w-150 mx-auto">
                                 Join thousands of teams already using BugTrack to ship better software, faster.
-                            </p>
+                            </div>
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button className="bg-indigo-700/80 text-white dark:bg-indigo-500/60 hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60 hover:text-white dark:hover:text-white">
                                     Get started for free

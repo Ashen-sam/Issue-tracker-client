@@ -80,10 +80,11 @@ export const Settings = () => {
                                 size="sm"
                                 variant="outline"
                                 onClick={handleOpenUpdateDialog}
-                                className="text-xs bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
-        hover:text-white dark:hover:text-white"
+                                className="text-xs text-white
+        border px-4 py-2  font-medium
+        dark:bg-indigo-500/60 bg-indigo-700/80
+  hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60
+  hover:text-white dark:hover:text-white "
                             >
                                 Edit Profile
                             </Button>
@@ -137,7 +138,7 @@ export const Settings = () => {
                 open={isUpdateDialogOpen}
                 title="Update Profile"
                 note="Update your name and email address"
-                icon={<User className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
+                icon={<User size={14} className=" " />}
                 onClose={() => setIsUpdateDialogOpen(false)}
                 footer={
                     <IssueDialogFooter

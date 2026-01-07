@@ -1,4 +1,4 @@
-import { ModeToggle } from "@/common";
+import { IssueDialog, IssueDialogFooter, ModeToggle } from "@/common";
 import { MotionPopup } from "@/common/motionPopup";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ export const MainLayout = () => {
     const { data: user } = useGetCurrentUserQuery();
     const [showPopup, setShowPopup] = useState(false);
     const [hasShownPopup, setHasShownPopup] = useState(false);
+    const [logoutOpen, setLogoutOpen] = useState(false);
 
     const username = user?.user?.name || 'User';
     const email = user?.user?.email || 'email@example.com';
@@ -84,9 +85,9 @@ export const MainLayout = () => {
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Avatar className="h-10 w-10 rounded-sm cursor-pointer hover:opacity-80  transition-opacity">
-                                        <AvatarFallback className=" bg-[#1475e1]/80 text-white
-        dark:bg-[#1475e1]/70
-        hover:bg-[#0f63c7]/80 dark:hover:bg-[#0f63c7]/60
+                                        <AvatarFallback className=" text-white
+        border px-4 py-2 text-sm 
+        dark:bg-indigo-500/60 bg-indigo-700/80
         hover:text-white dark:hover:text-white font-semibold  text-[13px]">
                                             {getInitials(username)}
                                         </AvatarFallback>
@@ -105,7 +106,7 @@ export const MainLayout = () => {
                                         <Button
                                             variant="ghost"
                                             className="w-full justify-start gap-2 text-sm font-normal"
-                                            onClick={handleLogout}
+                                            onClick={() => setLogoutOpen(true)}
                                         >
                                             <LogOut size={16} />
                                             Logout
@@ -126,6 +127,27 @@ export const MainLayout = () => {
                     <MotionPopup handleDismiss={handleDismiss} />
                 )}
             </AnimatePresence>
+            <IssueDialog
+                open={logoutOpen}
+                title="Logout"
+                note="You will be logged out of your account"
+                icon={<LogOut className="w-4 h-4" />}
+                onClose={() => setLogoutOpen(false)}
+                footer={
+                    <IssueDialogFooter
+                        onCancel={() => setLogoutOpen(false)}
+                        onConfirm={handleLogout}
+                        confirmText="Logout"
+                        isLoading={false}
+                        formMode="delete"
+                        enableCreateAnother={false}
+                    />
+                }
+            >
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Are you sure you want to logout? You will need to sign in again to access your account.
+                </div>
+            </IssueDialog>
         </div >
     )
 }
