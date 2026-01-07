@@ -11,7 +11,7 @@ const App = () => {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
         <Toaster
-          position="top-right"
+          position="bottom-right"
           expand={false}
           richColors
           closeButton

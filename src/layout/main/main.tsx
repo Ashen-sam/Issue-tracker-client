@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/common";
+import { MotionPopup } from "@/common/motionPopup";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,13 +8,17 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { useGetCurrentUserQuery } from "@/services";
+import { AnimatePresence } from "framer-motion";
 import { Bug, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Sidebar } from "../sidebar";
 
 export const MainLayout = () => {
     const navigate = useNavigate();
     const { data: user } = useGetCurrentUserQuery();
+    const [showPopup, setShowPopup] = useState(false);
+    const [hasShownPopup, setHasShownPopup] = useState(false);
 
     const username = user?.user?.name || 'User';
     const email = user?.user?.email || 'email@example.com';
@@ -26,10 +31,38 @@ export const MainLayout = () => {
             .toUpperCase()
             .slice(0, 2);
     };
+
     const handleLogout = () => {
-        // dispatch(logout());
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('vite-ui-theme');
         navigate('/login');
     };
+
+    useEffect(() => {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+
+        if (!isDarkMode && !hasShownPopup) {
+            const timer = setTimeout(() => {
+                setShowPopup(true);
+                setHasShownPopup(true);
+
+                const hideTimer = setTimeout(() => {
+                    setShowPopup(false);
+                }, 3000);
+
+                return () => clearTimeout(hideTimer);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [hasShownPopup, user]);
+
+    const handleDismiss = () => {
+        setShowPopup(false);
+    };
+
 
     return (
         <div className="min-h-screen dark:bg-[#1a1a1a] flex items-center justify-center p-8">
@@ -84,7 +117,12 @@ export const MainLayout = () => {
                     <Outlet />
                 </main>
             </div>
+
+            <AnimatePresence>
+                {showPopup && (
+                    <MotionPopup handleDismiss={handleDismiss} />
+                )}
+            </AnimatePresence>
         </div >
     )
-
 }

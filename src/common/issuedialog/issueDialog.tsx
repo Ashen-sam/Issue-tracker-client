@@ -26,8 +26,7 @@ export const IssueDialog = ({
         <Dialog
             open={open}
             onOpenChange={(val) => {
-                if (!val) return;
-                onClose();
+                if (!val) onClose();
             }}
         >
             <DialogContent

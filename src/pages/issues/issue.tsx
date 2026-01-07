@@ -1,6 +1,7 @@
 import { Layers, Layers2, LayersPlus, Pencil, Trash2 } from "lucide-react";
 import { Outlet } from "react-router-dom";
 import {
+    CommonLoader,
     InitialPage,
     IssueDialog,
     IssueDialogFooter,
@@ -83,8 +84,10 @@ export const Issue = () => {
 
     if (isLoadingIssues) {
         return (
-            <div className="w-full flex items-center justify-center py-8">
-                <div className="text-gray-500">Loading issues...</div>
+            <div className="w-full  flex justify-center items-center min-h-100">
+                <div className="flex items-center gap-2 text-sm px-3 py-[7.5px] border border-dashed rounded-md w-fit">
+                    <CommonLoader />
+                </div>
             </div>
         );
     }

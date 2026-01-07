@@ -1,4 +1,4 @@
-import { PriorityCommon, SeverityCommon, StatusCommon } from '@/common';
+import { CommonLoader, PriorityCommon, SeverityCommon, StatusCommon } from '@/common';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useGetIssueQuery } from '@/services/issueApi';
@@ -75,8 +75,10 @@ export const Overview = () => {
 
     if (isLoading) {
         return (
-            <div className="w-full flex items-center justify-center py-8">
-                <div className="text-gray-500">Loading issue details...</div>
+            <div className="w-full  flex justify-center items-center min-h-100">
+                <div className="flex items-center gap-2 text-sm px-3 py-[7.5px] border border-dashed rounded-md w-fit">
+                    <CommonLoader />
+                </div>
             </div>
         );
     }

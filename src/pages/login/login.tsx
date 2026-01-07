@@ -56,7 +56,7 @@ export const Login = () => {
         try {
             const result = await login({ email, password }).unwrap();
             dispatch(setCredentials(result));
-
+            localStorage.setItem('vite-ui-theme', 'system');
             toast.success('Login successful!', {
                 description: 'Welcome back to your dashboard'
             });

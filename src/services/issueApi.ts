@@ -75,7 +75,7 @@ export const issueApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-
+      invalidatesTags: ["Issue"],
       async onQueryStarted(newIssue, { dispatch, queryFulfilled, getState }) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = getState() as any;
@@ -185,7 +185,7 @@ export const issueApi = baseApi.injectEndpoints({
         url: `/issues/${id}`,
         method: "DELETE",
       }),
-
+      invalidatesTags: ["Issue"],
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const patchResults: any[] = [];

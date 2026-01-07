@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { IssueDialog, IssueDialogFooter } from "@/common";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Trash2, AlertTriangle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { logout, useDeleteUserMutation, useGetCurrentUserQuery, useUpdateUserMutation } from "@/services";
-import { IssueDialog, IssueDialogFooter } from "@/common";
+import { AlertTriangle, Trash2, User } from "lucide-react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export const Settings = () => {
@@ -60,7 +61,7 @@ export const Settings = () => {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="border  dark:border-zinc-700 rounded-lg p-6 backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40">
+                    <Card className=" rounded-lg p-6 backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -102,7 +103,7 @@ export const Settings = () => {
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
                     <div className="border border-red-300 dark:border-red-900/50 rounded-lg p-6 backdrop-blur-xl bg-white/40 dark:bg-zinc-900/40">
                         <div className="flex items-center justify-between">
@@ -123,7 +124,7 @@ export const Settings = () => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setIsDeleteDialogOpen(true)}
-                                className="text-xs border-red-300 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-500/10"
+                                className="text-xs border-red-300 dark:bg-red-400/60! bg-red-500/80! dark:border-red-900/50 dark:hover:bg-red-500/60! text-white  hover:bg-red-400/50!"
                             >
                                 Delete Account
                             </Button>
@@ -166,8 +167,7 @@ export const Settings = () => {
 
                     <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <Mail className="w-4 h-4" />
-                            Email Address
+                            Email
                         </Label>
                         <Input
                             id="email"
