@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { StatusCommon, type IssueStatus } from '../statusCommon';
 import { PriorityCommon, type IssuePriority } from '../priorityCommon';
-import { SeverityCommon, } from '../seveorityCommon';
-import type { IssueSeverity } from '@/services/issueApi';
+import { SeverityCommon, type IssueSeverity, } from '../seveorityCommon';
 
 
 interface IssueFormProps {

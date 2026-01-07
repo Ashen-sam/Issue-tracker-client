@@ -6,38 +6,29 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { logout } from "@/services/slices/authSlice";
-import type { RootState } from "@/store";
+import { useGetCurrentUserQuery } from "@/services";
 import { Bug, LogOut } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Sidebar } from "../sidebar";
 
 export const MainLayout = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const { data: user } = useGetCurrentUserQuery();
 
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate('/login');
-    };
+    const username = user?.user?.name || 'User';
+    const email = user?.user?.email || 'email@example.com';
 
-
-    const getUserInitials = () => {
-        if (user?.name) {
-            return user.name
-                .split(' ')
-                .map((n) => n[0])
-                .join('')
-                .toUpperCase();
-        }
-        const name = localStorage.getItem('userName') || 'WS';
+    const getInitials = (name: string) => {
         return name
             .split(' ')
-            .map((n) => n[0])
+            .map(word => word[0])
             .join('')
-            .toUpperCase();
+            .toUpperCase()
+            .slice(0, 2);
+    };
+    const handleLogout = () => {
+        // dispatch(logout());
+        navigate('/login');
     };
 
     return (
@@ -61,7 +52,7 @@ export const MainLayout = () => {
                                 <PopoverTrigger asChild>
                                     <Avatar className="h-10 w-10 rounded-sm cursor-pointer hover:opacity-80  transition-opacity">
                                         <AvatarFallback className=" dark:bg-indigo-500/50 bg-indigo-700/80 text-white  text-[13px]">
-                                            {getUserInitials()}
+                                            {getInitials(username)}
                                         </AvatarFallback>
                                     </Avatar>
                                 </PopoverTrigger>
@@ -69,10 +60,10 @@ export const MainLayout = () => {
                                     <div className="flex flex-col gap-1">
                                         <div className="px-2 py-2 border-b">
                                             <div className="text-sm font-medium">
-                                                {user?.name || localStorage.getItem('userName') || 'User'}
+                                                {username}
                                             </div>
                                             <div className="text-xs text-gray-500 dark:text-gray-400">
-                                                {user?.email || localStorage.getItem('userEmail') || ''}
+                                                {email}
                                             </div>
                                         </div>
                                         <Button
@@ -94,5 +85,6 @@ export const MainLayout = () => {
                 </main>
             </div>
         </div >
-    );
-};
+    )
+
+}
