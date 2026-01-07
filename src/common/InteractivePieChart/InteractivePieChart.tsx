@@ -30,6 +30,8 @@ interface PieChartDataItem {
   color?: string
 }
 
+type ChartSize = "sm" | "md" | "lg" | "xl"
+
 interface InteractivePieChartProps {
   data: PieChartDataItem[]
   title?: string
@@ -38,6 +40,38 @@ interface InteractivePieChartProps {
   className?: string
   defaultSelectedIndex?: number
   valueFormatter?: (value: number) => string
+  size?: ChartSize
+}
+
+const sizeConfig = {
+  sm: {
+    maxWidth: "200px",
+    innerRadius: 40,
+    strokeWidth: 3,
+    outerRadiusOffset: 6,
+    labelFontSize: "text-xl",
+  },
+  md: {
+    maxWidth: "300px",
+    innerRadius: 60,
+    strokeWidth: 5,
+    outerRadiusOffset: 10,
+    labelFontSize: "text-3xl",
+  },
+  lg: {
+    maxWidth: "400px",
+    innerRadius: 80,
+    strokeWidth: 6,
+    outerRadiusOffset: 12,
+    labelFontSize: "text-4xl",
+  },
+  xl: {
+    maxWidth: "500px",
+    innerRadius: 100,
+    strokeWidth: 8,
+    outerRadiusOffset: 15,
+    labelFontSize: "text-5xl",
+  },
 }
 
 export function InteractivePieChart({
@@ -48,8 +82,10 @@ export function InteractivePieChart({
   className = "",
   defaultSelectedIndex = 0,
   valueFormatter = (value) => value.toLocaleString(),
+  size = "md",
 }: InteractivePieChartProps) {
   const id = React.useId()
+  const config = sizeConfig[size]
 
   // Transform data for recharts
   const chartData = React.useMemo(
@@ -64,18 +100,18 @@ export function InteractivePieChart({
 
   // Generate chart config
   const chartConfig = React.useMemo(() => {
-    const config: ChartConfig = {
+    const chartCfg: ChartConfig = {
       value: {
         label: centerLabel,
       },
     }
     data.forEach((item, index) => {
-      config[`item-${index}`] = {
+      chartCfg[`item-${index}`] = {
         label: item.label,
         color: item.color || `hsl(var(--chart-${(index % 5) + 1}))`,
       }
     })
-    return config
+    return chartCfg
   }, [data, centerLabel])
 
   const [activeIndex, setActiveIndex] = React.useState(defaultSelectedIndex)
@@ -88,7 +124,7 @@ export function InteractivePieChart({
   }
 
   return (
-    <Card data-chart={id} className={`flex flex-col ${className}`}>
+    <Card data-chart={id} className={`flex flex-col ${className} bg-transparent`}>
       <ChartStyle id={id} config={chartConfig} />
       <CardHeader className="flex-row items-start space-y-0 pb-0">
         <div className="grid gap-1">
@@ -130,7 +166,8 @@ export function InteractivePieChart({
         <ChartContainer
           id={id}
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[300px]"
+          className="mx-auto aspect-square w-full"
+          style={{ maxWidth: config.maxWidth }}
         >
           <PieChart>
             <ChartTooltip
@@ -141,19 +178,19 @@ export function InteractivePieChart({
               data={chartData}
               dataKey="value"
               nameKey="name"
-              innerRadius={60}
-              strokeWidth={5}
+              innerRadius={config.innerRadius}
+              strokeWidth={config.strokeWidth}
               activeIndex={activeIndex}
               activeShape={({
                 outerRadius = 0,
                 ...props
               }: PieSectorDataItem) => (
                 <g>
-                  <Sector {...props} outerRadius={outerRadius + 10} />
+                  <Sector {...props} outerRadius={outerRadius + config.outerRadiusOffset} />
                   <Sector
                     {...props}
-                    outerRadius={outerRadius + 25}
-                    innerRadius={outerRadius + 12}
+                    outerRadius={outerRadius + config.outerRadiusOffset * 2.5}
+                    innerRadius={outerRadius + config.outerRadiusOffset * 1.2}
                   />
                 </g>
               )}
@@ -171,7 +208,7 @@ export function InteractivePieChart({
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          className={`fill-foreground ${config.labelFontSize} font-bold`}
                         >
                           {valueFormatter(chartData[activeIndex].value)}
                         </tspan>

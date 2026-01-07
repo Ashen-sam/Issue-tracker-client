@@ -3,7 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
-import { type IssuePriority, type IssueStatus } from "@/common";
+import {
+  type IssuePriority,
+  type IssueSeverity,
+  type IssueStatus,
+} from "@/common";
 import {
   useCreateIssueMutation,
   useDeleteIssueMutation,
@@ -18,6 +22,7 @@ interface IssueFormData {
   description: string;
   status: IssueStatus;
   priority: IssuePriority;
+  severity: IssueSeverity;
   createdAt?: string;
 }
 
@@ -68,7 +73,10 @@ export const useIssues = () => {
       toast.error("Title is required");
       return;
     }
-
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
+      return;
+    }
     setCreateOpen(false);
     setCurrentFormData(null);
 
@@ -81,6 +89,7 @@ export const useIssues = () => {
         title: formData.title,
         description: formData.description,
         status: formData.status,
+        severity: formData.severity,
         priority: formData.priority,
       }).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,6 +110,10 @@ export const useIssues = () => {
       toast.error("Title is required");
       return;
     }
+    if (!formData.description.trim()) {
+      toast.error("Description is required");
+      return;
+    }
 
     setEditOpen(false);
     setCurrentIssue(null);
@@ -117,6 +130,7 @@ export const useIssues = () => {
           title: formData.title,
           description: formData.description,
           status: formData.status,
+          severity: formData.severity,
           priority: formData.priority,
         },
       }).unwrap();
@@ -200,6 +214,7 @@ export const useIssues = () => {
       title: item.title,
       description: item.description,
       status: item.status,
+      severity: item.severity,
       priority: item.priority,
     });
     setEditOpen(true);

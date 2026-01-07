@@ -62,7 +62,7 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
 }: CommonTableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
     const [openPopover, setOpenPopover] = useState<string | null>(null);
     const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(new Set());
@@ -88,7 +88,6 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
     const filteredData = useMemo(() => {
         let filtered = data;
 
-        // Filter by status
         if (selectedStatuses.size > 0) {
             filtered = filtered.filter(item => {
                 const itemStatus = String(item[statusKey]);
@@ -96,7 +95,6 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
             });
         }
 
-        // Filter by search term
         if (searchTerm) {
             filtered = filtered.filter((item) =>
                 columns.some((column) => {
@@ -110,8 +108,9 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
         return filtered;
     }, [data, searchTerm, columns, selectedStatuses, statusKey]);
 
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+    const safePage = Math.min(currentPage, totalPages);
+    const startIndex = (safePage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginatedData = filteredData.slice(startIndex, endIndex);
 
@@ -381,14 +380,14 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
 
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-gray-400">
-                            Page {currentPage} of {totalPages}
+                            Page {safePage} of {totalPages}
                         </span>
                         <div className="flex gap-1">
                             <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                                disabled={currentPage === 1}
+                                disabled={safePage === 1}
                             >
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -396,7 +395,7 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                                disabled={currentPage === totalPages}
+                                disabled={safePage === totalPages || filteredData.length === 0}
                             >
                                 <ChevronRight className="h-4 w-4" />
                             </Button>

@@ -1,48 +1,20 @@
 import { CommonLoader, PriorityCommon, SeverityCommon, StatusCommon } from '@/common';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { InteractivePieChart } from '@/common/InteractivePieChart';
+import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useGetIssueQuery } from '@/services/issueApi';
 import { Layers2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-const CircularProgress = ({ value }: { value: number }) => {
-    const radius = 70;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (value / 100) * circumference;
-
-    return (
-        <div className="flex items-center justify-center">
-            <div className="relative w-40 h-40">
-                <svg className="transform -rotate-90 w-40 h-40">
-                    <circle
-                        cx="80"
-                        cy="80"
-                        r={radius}
-                        stroke="currentColor"
-                        strokeWidth="12"
-                        fill="transparent"
-                        className="text-gray-200"
-                    />
-                    <circle
-                        cx="80"
-                        cy="80"
-                        r={radius}
-                        stroke="#6F61D9"
-                        strokeWidth="12"
-                        fill="transparent"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={offset}
-                        className="text-primary transition-all duration-500"
-                        strokeLinecap="round"
-                    />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl font-bold">{value}%</span>
-                </div>
-            </div>
-        </div>
-    );
+const COLORS = {
+    status: {
+        OPEN: "#3b82f6",
+        IN_PROGRESS: "#f59e0b",
+        RESOLVED: "#10b981",
+        CLOSED: "#6b7280",
+        ON_HOLD: "#8b5cf6"
+    }
 };
 
 export const Overview = () => {
@@ -64,15 +36,25 @@ export const Overview = () => {
         return statusProgress[issue.status] || 0;
     }, [issue]);
 
-    const daysRemaining = useMemo(() => {
-        if (!issue?.createdAt) return 0;
-        const today = new Date();
-        const createdDate = new Date(issue.createdAt);
-        const diffTime = today.getTime() - createdDate.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    }, [issue]);
+    const pieChartData = useMemo(() => {
+        if (!issue) return [];
 
+        const progress = issueProgress;
+        const remaining = 100 - progress;
+
+        return [
+            {
+                label: 'Completed',
+                value: progress,
+                color: COLORS.status[issue.status as keyof typeof COLORS.status] || "#3b82f6"
+            },
+            {
+                label: 'Remaining',
+                value: remaining,
+                color: "#e5e7eb"
+            }
+        ];
+    }, [issue, issueProgress]);
     if (isLoading) {
         return (
             <div className="w-full  flex justify-center items-center min-h-100">
@@ -151,7 +133,7 @@ export const Overview = () => {
                                 <label className="text-xs font-semibold text-muted-foreground tracking-wide mb-2 block">
                                     Description
                                 </label>
-                                <div className="text-sm text-foreground/80 leading-relaxed">
+                                <div className="text-sm text-foreground/80 leading-relaxed wrap-break-word">
                                     {issue.description || 'No description available'}
                                 </div>
                             </div>
@@ -195,31 +177,17 @@ export const Overview = () => {
                     </Card>
                 </div>
 
-                <div className="space-y-6">
-                    <Card className="shadow-none rounded-sm dark:bg-[#1a1a1a] border">
-                        <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                                <CardTitle className="text-base font-semibold">Summary</CardTitle>
-                            </div>
-                            <div className="pt-2">
-                                <CircularProgress value={60} />
-                            </div>
-                        </CardHeader>
+                <div className="">
+                    <Card className="shadow-none pb-4 pt-0 rounded-sm dark:bg-[#1a1a1a] border">
+                        <InteractivePieChart
+                            data={pieChartData}
+                            title="Summary"
+                            centerLabel="Progress"
+                            size="sm"
+                            valueFormatter={(value) => `${value}%`}
+                            className="border-none shadow-none"
+                        />
                         <CardContent className="space-y-4">
-                            <div>
-                                <div className="font-semibold text-sm mb-2">
-                                    {issueProgress === 100 ? 'Completed!' :
-                                        issueProgress >= 60 ? 'In progress!' :
-                                            issueProgress >= 40 ? 'Making progress' : 'Just started'}
-                                </div>
-                                <div className="text-xs text-muted-foreground leading-relaxed">
-                                    This issue is being tracked and worked on by the team.
-                                    {' '}
-                                    Created {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} ago.
-                                </div>
-                            </div>
-
-                            <Separator />
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                                     <span className="text-sm font-semibold text-primary">

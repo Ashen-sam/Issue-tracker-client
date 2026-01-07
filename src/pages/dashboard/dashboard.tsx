@@ -1,6 +1,6 @@
 import { CommonLoader, InitialPage, PriorityCommon, SeverityCommon, StatusCommon } from "@/common";
 import { InteractivePieChart } from "@/common/InteractivePieChart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useGetDashboardQuery } from "@/services/dashboardApi";
 import { AlertCircle, Bug, CheckCircle2, Clock, Home, Plus, TrendingUp } from "lucide-react";
 import { useState } from "react";
@@ -149,18 +149,16 @@ export const Dashboard = () => {
                         className="shadow-none rounded-sm dark:bg-[#1a1a1a] border"
                     />
                     {/* Recent Issues */}
-                    <Card className="shadow-none rounded-sm dark:bg-[#1a1a1a] border">
-                        <CardHeader className="p-4 pb-2">
-                            <CardTitle className="text-sm font-semibold">Recent Issues</CardTitle>
-                        </CardHeader>
-                        <CardContent className="">
+                    <div className="shadow-none p-3 rounded-sm dark:bg-[#1a1a1a] border">
+                        <div className="text-sm font-semibold ">Recent Issues</div>
+                        <div className="p-2">
                             {recentIssues.length > 0 ? (
-                                <div className="space-y-3">
+                                <div className=" ">
                                     {recentIssues.map((issue) => (
-                                        <div key={issue._id} className="pb-3 border-b last:border-b-0 last:pb-0">
+                                        <div key={issue._id} className=" border-b py-2   last:border-b-0 last:pb-0">
                                             <div className=" items-start gap-3">
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="text-sm text-foreground/90 line-clamp-2">
+                                                    <div className="text-sm text-foreground/90 p-2 line-clamp-2">
                                                         {issue.title}
                                                     </div>
                                                     {issue?.assignedTo?.name && (
@@ -170,9 +168,9 @@ export const Dashboard = () => {
                                                     )}
                                                 </div>
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    <PriorityCommon priority={issue.priority} />
-                                                    <StatusCommon status={issue.status} />
-                                                    <SeverityCommon severity={issue.severity} />
+                                                    <PriorityCommon priority={issue.priority} className="border " />
+                                                    <StatusCommon status={issue.status} className="border" />
+                                                    <SeverityCommon severity={issue.severity} className="border" />
                                                 </div>
 
                                             </div>
@@ -184,13 +182,13 @@ export const Dashboard = () => {
                                     No recent issues found
                                 </div>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                     <div className=" gap-4 ">
-                        <Card className="shadow-none rounded-sm dark:bg-[#1a1a1a] border">
-                            <CardHeader className="p-4 pb-2">
-                                <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
-                            </CardHeader>
+                        <Card className="shadow-none rounded-sm pt-0 dark:bg-[#1a1a1a] border">
+                            <div className="p-4 pb-2">
+                                <div className="text-sm font-semibold">Recent Activity</div>
+                            </div>
                             <CardContent className="p-4 pt-2">
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between pb-3 border-b">
@@ -217,10 +215,6 @@ export const Dashboard = () => {
                     </div>
 
                 </div>
-
-
-
-
             </div>
         </div>
     );

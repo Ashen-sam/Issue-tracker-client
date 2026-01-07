@@ -202,42 +202,40 @@ export const Landing = () => {
                         ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200 dark:bg-black/80 dark:border-white/10'
                         : 'bg-transparent'
                         }`}>
-                    <div className="max-w-300 mx-auto px-6 py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-8">
-                            <div className="text-base font-medium text-black dark:text-white">
-                                <Bug />
-                            </div>
-                            <div className="hidden md:flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-                                <a href="/" className="transition-colors hover:text-black dark:hover:text-white">Features</a>
-                                <a href="/" className="transition-colors hover:text-black dark:hover:text-white">Method</a>
-                                <a href="/" className="transition-colors hover:text-black dark:hover:text-white">Customers</a>
-                            </div>
+                    <div className="relative max-w-[1100px] mx-auto px-6 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-black dark:text-white">
+                            <Bug className="w-5 h-5" />
                         </div>
-                        <div className="flex items-center gap-3">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400"
-                            >
-                            </motion.button>
-                            <button
-                                className="hidden sm:flex text-sm text-black hover:text-black hover:bg-gray-100 bg-transparent dark:text-white dark:hover:text-white dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
-                            >
-                                <Link to={'/login'}>
-                                    Log in
-
-                                </Link>
+                        <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
+                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                                Features
+                            </a>
+                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                                Method
+                            </a>
+                            <a href="/" className="transition-colors hover:text-black dark:hover:text-white">
+                                Customers
+                            </a>
+                        </div>
+                        <div className="flex items-center ">
+                            <button className="hidden sm:flex text-sm text-black hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-colors">
+                                <Link to="/login">Log in</Link>
                             </button>
+                            <Button size={'sm'} variant={'default'} >
+                                <Link to="/login">Sign up</Link>
+                            </Button>
+
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setIsMobileMenuOpen(true)}
-                                className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-400"
+                                className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-white/10"
                             >
                                 <Menu className="w-5 h-5 text-black dark:text-white" />
                             </motion.button>
                         </div>
                     </div>
+
                 </motion.nav>
 
                 <AnimatePresence mode="wait">
@@ -249,7 +247,7 @@ export const Landing = () => {
                                 exit="closed"
                                 variants={overlayVariants}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] md:hidden"
+                                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-60 md:hidden"
                             />
                             <motion.div
                                 initial="closed"
@@ -344,62 +342,58 @@ export const Landing = () => {
                         </>
                     )}
                 </AnimatePresence>
-
                 <section className="relative pt-40 pb-32 px-6 overflow-hidden">
-                    <div className="max-w-350 mx-auto">
-                        <div className="flex *:justify-center items-center text-center ">
-                            <motion.div className="z-10">
-                                <motion.h1
-                                    initial={{ opacity: 0, y: 30 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.2 }}
-                                    className="text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight mb-6 leading-[1.1] text-black dark:text-white">
-                                    <span className='italic relative font-semibold py-2 px-5 rounded-md'>
-                                        BugTrack
-                                        <div
-                                            className="absolute inset-0 rounded-xl bg-white opacity-30 blur-lg"
-                                            style={{
-                                                background: 'radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 90%)',
-                                            }}
-                                        />
-                                    </span>is a built tool for tracking issues of your projects
-                                </motion.h1>
+                    <div className="max-w-5xl mx-auto text-center">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 24 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight leading-[1.08] text-black dark:text-white"
+                        >
+                            <span className="relative font-semibold">
+                                BugTrack
+                                <span
+                                    className="absolute inset-0 -z-10 blur-xl opacity-40"
+                                    style={{
+                                        background:
+                                            "radial-gradient(circle at center, rgba(255,255,255,0.6), transparent 70%)",
+                                    }}
+                                />
+                            </span>{" "}
+                            is a purpose-built tool for tracking project issues
+                        </motion.h1>
 
-                                <motion.p
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.4 }}
-                                    className="text-lg mb-8 leading-relaxed text-gray-600 dark:text-gray-400">
-                                    Meet the system for modern software development.<br />
-                                    Streamline issues, projects, and product roadmaps.
-                                </motion.p>
+                        <motion.p
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto"
+                        >
+                            Meet the system for modern software development.
+                            <br />
+                            Streamline issues, projects, and product roadmaps.
+                        </motion.p>
 
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.6 }}
-                                    className="flex flex-wrap items-center justify-center gap-4">
-                                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                        <Button className="bg-indigo-700/80 text-white dark:bg-indigo-500/60 hover:bg-indigo-600/80 dark:hover:bg-indigo-400/60 hover:text-white dark:hover:text-white">
-                                            <Link to={'register'}>
-                                                Start building
-                                            </Link>
-                                        </Button>
-                                    </motion.div>
-                                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                        <Button variant="outline">
-                                            <Link to={'register'}>
-                                                Register
+                        <motion.div
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            className="mt-10 flex items-center justify-center gap-4"
+                        >
+                            <Button className="px-6 h-11 bg-black text-white dark:bg-white dark:text-black hover:opacity-90">
+                                <Link to="/register">Start building</Link>
+                            </Button>
 
-
-                                            </Link>
-                                        </Button>
-                                    </motion.div>
-                                </motion.div>
-                            </motion.div>
-                        </div>
+                            <Button
+                                variant="ghost"
+                                className="px-6 h-11 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                            >
+                                <Link to="/register">Register</Link>
+                            </Button>
+                        </motion.div>
                     </div>
                 </section>
+
 
                 <section className="px-6 pb-20">
                     <motion.div
