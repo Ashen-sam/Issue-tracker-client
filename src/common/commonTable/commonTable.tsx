@@ -44,6 +44,7 @@ interface CommonTableProps<T> {
     onDelete?: (item: T) => void;
     enableCheckbox?: boolean;
     onSelectionChange?: (selectedIds: string[]) => void;
+    statusKey?: keyof T;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,29 +58,57 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
     onDelete,
     enableCheckbox = false,
     onSelectionChange,
+    statusKey = 'status' as keyof T,
 }: CommonTableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
     const [openPopover, setOpenPopover] = useState<string | null>(null);
+    const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(new Set());
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const getCellValue = (item: T, column: Column<T>) => {
         if (column.render) return column.render(item);
         return item[column.key as keyof T];
     };
 
-    const filteredData = useMemo(() => {
-        if (!searchTerm) return data;
+    // Extract unique statuses from data
+    const availableStatuses = useMemo(() => {
+        const statuses = new Set<string>();
+        data.forEach(item => {
+            const status = item[statusKey];
+            if (status) {
+                statuses.add(String(status));
+            }
+        });
+        return Array.from(statuses).sort();
+    }, [data, statusKey]);
 
-        return data.filter((item) =>
-            columns.some((column) => {
-                if (column.filterable === false) return false;
-                const value = getCellValue(item, column);
-                return String(value).toLowerCase().includes(searchTerm.toLowerCase());
-            })
-        );
-    }, [data, searchTerm, columns]);
+    const filteredData = useMemo(() => {
+        let filtered = data;
+
+        // Filter by status
+        if (selectedStatuses.size > 0) {
+            filtered = filtered.filter(item => {
+                const itemStatus = String(item[statusKey]);
+                return selectedStatuses.has(itemStatus);
+            });
+        }
+
+        // Filter by search term
+        if (searchTerm) {
+            filtered = filtered.filter((item) =>
+                columns.some((column) => {
+                    if (column.filterable === false) return false;
+                    const value = getCellValue(item, column);
+                    return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+                })
+            );
+        }
+
+        return filtered;
+    }, [data, searchTerm, columns, selectedStatuses, statusKey]);
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -125,6 +154,22 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
         if (action === 'delete' && onDelete) onDelete(item);
     };
 
+    const handleStatusToggle = (status: string) => {
+        const newStatuses = new Set(selectedStatuses);
+        if (newStatuses.has(status)) {
+            newStatuses.delete(status);
+        } else {
+            newStatuses.add(status);
+        }
+        setSelectedStatuses(newStatuses);
+        setCurrentPage(1);
+    };
+
+    const clearFilters = () => {
+        setSelectedStatuses(new Set());
+        setCurrentPage(1);
+    };
+
     return (
         <div className={`space-y-4 ${className}`}>
             <div className="flex items-center gap-2 ml-25">
@@ -142,7 +187,56 @@ export const CommonTable = <T extends { _id: string } & Record<string, any>>({
                     />
                 </div>
                 <div className='flex items-center gap-2'>
-                    <ListFilter size={18} />
+                    <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+                        <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="gap-2">
+                                <ListFilter size={18} />
+                                {selectedStatuses.size > 0 && (
+                                    <span className="text-xs bg-blue-500 text-white rounded-full px-2 py-0.5">
+                                        {selectedStatuses.size}
+                                    </span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-3" align="end">
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="font-semibold text-sm">Filter by Status</h4>
+                                    {selectedStatuses.size > 0 && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={clearFilters}
+                                            className="h-auto py-1 px-2 text-xs"
+                                        >
+                                            Clear
+                                        </Button>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    {availableStatuses.length === 0 ? (
+                                        <p className="text-sm text-gray-500">No statuses available</p>
+                                    ) : (
+                                        availableStatuses.map((status) => (
+                                            <div key={status} className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id={`status-${status}`}
+                                                    checked={selectedStatuses.has(status)}
+                                                    onCheckedChange={() => handleStatusToggle(status)}
+                                                />
+                                                <label
+                                                    htmlFor={`status-${status}`}
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                                >
+                                                    {status}
+                                                </label>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </div>
 

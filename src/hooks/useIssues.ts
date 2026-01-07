@@ -28,12 +28,12 @@ export const useIssues = () => {
   const [currentFormData, setCurrentFormData] = useState<IssueFormData | null>(
     null
   );
-
+  const EMPTY_PARAMS = {};
   const {
     data: issuesData,
     isLoading: isLoadingIssues,
     error: issuesError,
-  } = useGetIssuesQuery({});
+  } = useGetIssuesQuery(EMPTY_PARAMS);
 
   const [createIssue] = useCreateIssueMutation();
   const [updateIssue] = useUpdateIssueMutation();
@@ -47,7 +47,6 @@ export const useIssues = () => {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const [currentIssue, setCurrentIssue] = useState<IIssue | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Filter issues for current user
   const issues = currentUser
@@ -66,68 +65,50 @@ export const useIssues = () => {
 
   const handleCreate = async (formData: IssueFormData) => {
     if (!formData.title.trim()) {
-      toast.error("Title is required", {
-        description: "Please enter a title for the issue.",
-      });
+      toast.error("Title is required");
       return;
     }
 
-    setIsLoading(true);
-    const toastId = toast.loading("Creating issue...");
+    setCreateOpen(false);
+    setCurrentFormData(null);
+
+    toast.success("Issue created", {
+      description: `"${formData.title}" has been added.`,
+    });
 
     try {
-      const result = await createIssue({
+      await createIssue({
         title: formData.title,
         description: formData.description,
         status: formData.status,
         priority: formData.priority,
       }).unwrap();
-
-      toast.success("Issue created successfully", {
-        id: toastId,
-        description: `"${formData.title}" has been added to your issues.`,
-      });
-
-      setCreateOpen(false);
-      setCurrentFormData(null);
-
-      return result;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred";
-
       toast.error("Failed to create issue", {
-        id: toastId,
-        description: errorMessage,
+        description: error?.data?.message || "Something went wrong",
       });
-
-      console.error("Failed to create issue:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleEdit = async (formData: IssueFormData) => {
     if (!currentIssue) {
-      toast.error("No issue selected", {
-        description: "Please select an issue to edit.",
-      });
+      toast.error("No issue selected");
       return;
     }
 
     if (!formData.title.trim()) {
-      toast.error("Title is required", {
-        description: "Please enter a title for the issue.",
-      });
+      toast.error("Title is required");
       return;
     }
 
-    setIsLoading(true);
-    const toastId = toast.loading("Updating issue...");
+    setEditOpen(false);
+    setCurrentIssue(null);
+    setCurrentFormData(null);
+
+    toast.success("Issue updated", {
+      description: `"${formData.title}" has been updated.`,
+    });
 
     try {
       await updateIssue({
@@ -139,132 +120,73 @@ export const useIssues = () => {
           priority: formData.priority,
         },
       }).unwrap();
-
-      toast.success("Issue updated successfully", {
-        id: toastId,
-        description: `"${formData.title}" has been updated.`,
-      });
-
-      setEditOpen(false);
-      setCurrentIssue(null);
-      setCurrentFormData(null);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred";
-
       toast.error("Failed to update issue", {
-        id: toastId,
-        description: errorMessage,
+        description: error?.data?.message || "Something went wrong",
       });
-
-      console.error("Failed to update issue:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
     if (!currentIssue) {
-      toast.error("No issue selected", {
-        description: "Please select an issue to delete.",
-      });
+      toast.error("No issue selected");
       return;
     }
 
-    setIsLoading(true);
-    const toastId = toast.loading("Deleting issue...");
+    const issueTitle = currentIssue.title;
+    const issueIdToDelete = currentIssue._id;
+    setDeleteOpen(false);
+    setCurrentIssue(null);
+
+    toast.success("Issue deleted", {
+      description: `"${issueTitle}" has been removed.`,
+    });
+
+    if (issueId === issueIdToDelete) {
+      navigate("/issues");
+    }
 
     try {
-      await deleteIssue(currentIssue._id).unwrap();
-
-      toast.success("Issue deleted successfully", {
-        id: toastId,
-        description: `"${currentIssue.title}" has been removed.`,
-      });
-
-      setDeleteOpen(false);
-      setCurrentIssue(null);
-
-      // Navigate away if viewing the deleted issue
-      if (issueId === currentIssue._id) {
-        navigate("/issues");
-      }
+      await deleteIssue(issueIdToDelete).unwrap();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred";
-
       toast.error("Failed to delete issue", {
-        id: toastId,
-        description: errorMessage,
+        description: error?.data?.message || "Something went wrong",
       });
-
-      console.error("Failed to delete issue:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedIssues.length === 0) {
-      toast.error("No issues selected", {
-        description: "Please select at least one issue to delete.",
-      });
+      toast.error("No issues selected");
       return;
     }
 
-    setIsLoading(true);
-    const toastId = toast.loading(
-      `Deleting ${selectedIssues.length} issue${
-        selectedIssues.length > 1 ? "s" : ""
-      }...`
-    );
+    const deleteCount = selectedIssues.length;
+    const issuesToDelete = [...selectedIssues];
+
+    setBulkDeleteOpen(false);
+    setSelectedIssues([]);
+
+    toast.success(`${deleteCount} issue${deleteCount > 1 ? "s" : ""} deleted`, {
+      description: "The selected issues have been removed.",
+    });
+
+    if (issueId && issuesToDelete.includes(issueId)) {
+      navigate("/issues");
+    }
 
     try {
-      const deletePromises = selectedIssues.map((id) =>
+      const deletePromises = issuesToDelete.map((id) =>
         deleteIssue(id).unwrap()
       );
       await Promise.all(deletePromises);
-
-      toast.success(
-        `${selectedIssues.length} issue${
-          selectedIssues.length > 1 ? "s" : ""
-        } deleted successfully`,
-        {
-          id: toastId,
-          description: "The selected issues have been removed.",
-        }
-      );
-
-      setSelectedIssues([]);
-      setBulkDeleteOpen(false);
-
-      if (issueId && selectedIssues.includes(issueId)) {
-        navigate("/issues");
-      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred";
-
       toast.error("Failed to delete issues", {
-        id: toastId,
-        description: errorMessage,
+        description: error?.data?.message || "Something went wrong",
       });
-
-      console.error("Failed to bulk delete issues:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -325,7 +247,6 @@ export const useIssues = () => {
     setCurrentFormData,
     selectedIssues,
     currentIssue,
-    isLoading,
     createOpen,
     editOpen,
     deleteOpen,

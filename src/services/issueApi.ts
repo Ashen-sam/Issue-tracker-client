@@ -1,7 +1,5 @@
-import type { IssuePriority, IssueStatus } from "@/common";
+import type { IssuePriority, IssueSeverity, IssueStatus } from "@/common";
 import { baseApi } from "@/store";
-
-export type IssueSeverity = "Minor" | "Major" | "Critical";
 
 export interface IUser {
   _id: string;
@@ -23,30 +21,32 @@ export interface IIssue {
   createdAt: string;
   updatedAt: string;
 }
+
+type IssuesQueryResponse = {
+  issues: IIssue[];
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
+  statusCounts: Record<string, number>;
+};
+
+type IssuesQueryParams = {
+  status?: string;
+  priority?: string;
+  severity?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
+
 export const issueApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getIssues: builder.query<
-      {
-        issues: IIssue[];
-        pagination: {
-          total: number;
-          page: number;
-          pages: number;
-          limit: number;
-        };
-        statusCounts: Record<string, number>;
-      },
-      {
-        status?: string;
-        priority?: string;
-        severity?: string;
-        search?: string;
-        page?: number;
-        limit?: number;
-        sortBy?: string;
-        sortOrder?: "asc" | "desc";
-      }
-    >({
+    getIssues: builder.query<IssuesQueryResponse, IssuesQueryParams>({
       query: (params) => ({
         url: "/issues",
         method: "GET",
@@ -75,7 +75,51 @@ export const issueApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Issue", id: "LIST" }],
+
+      async onQueryStarted(newIssue, { dispatch, queryFulfilled, getState }) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const state = getState() as any;
+        const currentUser = state.auth.user;
+
+        const tempId = `temp-${Date.now()}`;
+        const optimisticIssue: IIssue = {
+          _id: tempId,
+          title: newIssue.title || "",
+          description: newIssue.description || "",
+          status: newIssue.status || "Open",
+          priority: newIssue.priority || "Medium",
+          severity: newIssue.severity || "Minor",
+          createdBy: currentUser,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const patchResults: any[] = [];
+
+        const emptyPatch = dispatch(
+          issueApi.util.updateQueryData("getIssues", {}, (draft) => {
+            draft.issues.unshift(optimisticIssue);
+            draft.pagination.total += 1;
+          })
+        );
+        patchResults.push(emptyPatch);
+
+        try {
+          const { data: serverIssue } = await queryFulfilled;
+
+          dispatch(
+            issueApi.util.updateQueryData("getIssues", {}, (draft) => {
+              const index = draft.issues.findIndex((i) => i._id === tempId);
+              if (index !== -1) {
+                draft.issues[index] = serverIssue;
+              }
+            })
+          );
+        } catch {
+          patchResults.forEach((patch) => patch.undo());
+        }
+      },
     }),
 
     updateIssue: builder.mutation<
@@ -87,10 +131,53 @@ export const issueApi = baseApi.injectEndpoints({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (_result, _error, { id }) => [
-        { type: "Issue", id },
-        { type: "Issue", id: "LIST" },
-      ],
+
+      async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
+        const now = new Date().toISOString();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const patchResults: any[] = [];
+
+        const listPatch = dispatch(
+          issueApi.util.updateQueryData("getIssues", {}, (draft) => {
+            const issue = draft.issues.find((i) => i._id === id);
+            if (issue) {
+              Object.assign(issue, body);
+              issue.updatedAt = now;
+            }
+          })
+        );
+        patchResults.push(listPatch);
+
+        const singlePatch = dispatch(
+          issueApi.util.updateQueryData("getIssue", id, (draft) => {
+            Object.assign(draft, body);
+            draft.updatedAt = now;
+          })
+        );
+        patchResults.push(singlePatch);
+
+        try {
+          const { data: serverIssue } = await queryFulfilled;
+
+          dispatch(
+            issueApi.util.updateQueryData("getIssues", {}, (draft) => {
+              const issue = draft.issues.find((i) => i._id === id);
+              if (issue) {
+                Object.assign(issue, serverIssue);
+              }
+            })
+          );
+
+          dispatch(
+            issueApi.util.updateQueryData("getIssue", id, (draft) => {
+              Object.assign(draft, serverIssue);
+            })
+          );
+        } catch {
+          patchResults.forEach((patch) => patch.undo());
+        }
+      },
     }),
 
     deleteIssue: builder.mutation<{ msg: string }, string>({
@@ -98,12 +185,28 @@ export const issueApi = baseApi.injectEndpoints({
         url: `/issues/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_result, _error, id) => [
-        { type: "Issue", id },
-        { type: "Issue", id: "LIST" },
-      ],
+
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const patchResults: any[] = [];
+
+        const listPatch = dispatch(
+          issueApi.util.updateQueryData("getIssues", {}, (draft) => {
+            draft.issues = draft.issues.filter((issue) => issue._id !== id);
+            draft.pagination.total -= 1;
+          })
+        );
+        patchResults.push(listPatch);
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResults.forEach((patch) => patch.undo());
+        }
+      },
     }),
   }),
+
   overrideExisting: false,
 });
 

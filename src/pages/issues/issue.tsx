@@ -32,7 +32,6 @@ export const Issue = () => {
         setBulkDeleteOpen,
         currentIssue,
         setCurrentIssue,
-        isLoading,
         handleCreate,
         handleEdit,
         handleDelete,
@@ -137,6 +136,7 @@ export const Issue = () => {
                             data={issues}
                             columns={issueTableColumns}
                             enableCheckbox={true}
+                            statusKey="status"
                             onView={handleViewIssue}
                             onEdit={handleEditIssue}
                             onDelete={handleDeleteIssue}
@@ -157,7 +157,7 @@ export const Issue = () => {
                         onCancel={() => setCreateOpen(false)}
                         onConfirm={() => currentFormData && handleCreate(currentFormData)}
                         confirmText="Create"
-                        isLoading={isLoading}
+                        isLoading={false}
                         formMode="add"
                     />
                 }
@@ -168,6 +168,7 @@ export const Issue = () => {
                     onCancel={() => setCreateOpen(false)}
                 />
             </IssueDialog>
+
             <IssueDialog
                 open={editOpen}
                 title="Edit Issue"
@@ -185,7 +186,7 @@ export const Issue = () => {
                         }}
                         onConfirm={() => currentFormData && handleEdit(currentFormData)}
                         confirmText="Save Changes"
-                        isLoading={isLoading}
+                        isLoading={false}
                         formMode="edit"
                         enableCreateAnother={false}
                     />
@@ -201,6 +202,7 @@ export const Issue = () => {
                     }}
                 />
             </IssueDialog>
+
             <IssueDialog
                 open={deleteOpen}
                 title="Delete Issue"
@@ -218,7 +220,7 @@ export const Issue = () => {
                         }}
                         onConfirm={handleDelete}
                         confirmText="Delete"
-                        isLoading={isLoading}
+                        isLoading={false}
                         formMode="delete"
                         enableCreateAnother={false}
                     />
@@ -228,6 +230,7 @@ export const Issue = () => {
                     Are you sure you want to delete "<strong>{currentIssue?.title}</strong>"? This action cannot be undone.
                 </div>
             </IssueDialog>
+
             <IssueDialog
                 open={bulkDeleteOpen}
                 title="Delete Multiple Issues"
@@ -239,7 +242,7 @@ export const Issue = () => {
                         onCancel={() => setBulkDeleteOpen(false)}
                         onConfirm={handleBulkDelete}
                         confirmText="Delete All"
-                        isLoading={isLoading}
+                        isLoading={false}
                         formMode="delete"
                         enableCreateAnother={false}
                     />
