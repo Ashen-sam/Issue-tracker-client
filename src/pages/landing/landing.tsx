@@ -1,3 +1,4 @@
+import { useTheme } from '@/common';
 import { Button } from '@/components/ui/button';
 import type { Variants } from 'framer-motion';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -9,6 +10,8 @@ import {
     GitBranch,
     Layers,
     Menu,
+    Moon,
+    Sun,
     Target,
     TrendingUp,
     X,
@@ -21,7 +24,15 @@ import { Link } from 'react-router-dom';
 export const Landing = () => {
     const [scrollY, setScrollY] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { theme, setTheme } = useTheme()
 
+    const toggleTheme = () => {
+        if (theme === "light") {
+            setTheme("dark")
+        } else {
+            setTheme("light")
+        }
+    }
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
         window.addEventListener('scroll', handleScroll);
@@ -251,6 +262,20 @@ export const Landing = () => {
 
                                 </Link>
                             </Button>
+                            <div className=''>
+                                <button
+                                    onClick={toggleTheme}
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-background/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    type="button"
+                                    aria-label="Toggle theme"
+                                >
+                                    {theme === "dark" ? (
+                                        <Sun className="h-4 w-4" />
+                                    ) : (
+                                        <Moon className="h-4 w-4" />
+                                    )}
+                                </button>
+                            </div>
 
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
