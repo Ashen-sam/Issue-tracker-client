@@ -212,7 +212,7 @@ export const Landing = () => {
                         : 'bg-transparent'
                         }`}>
                     <div className="relative max-w-[1100px] mx-auto px-6 py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-black border border-dashed p-2 rounded-sm dark:text-white">
+                        <div className="flex items-center gap-2 text-black  p-2 rounded-sm dark:text-white">
                             <Bug className="w-10 h-10 relative text-zinc-600 dark:text-zinc-200" />
                         </div>
                         <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
@@ -239,7 +239,7 @@ export const Landing = () => {
                             </a>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button className="hidden sm:flex text-sm text-black hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 px-4 py-2 rounded-lg transition-colors">
+                            <button className="hidden sm:flex text-sm  hover:bg-gray-100  dark:hover:bg-white/10 px-4 py-2 rounded-lg text-gray-600 dark:text-gray-400 transition-colors">
                                 <Link to={'login'}>
                                     Log in
 
@@ -371,7 +371,7 @@ export const Landing = () => {
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             className="text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight leading-[1.08] text-black dark:text-white"
                         >
-                            <span className="relative font-semibold italic">
+                            <span className="relative font-bold italic text-[80px]">
                                 BugTrack
                                 <span
                                     className="absolute inset-0 blur-xl opacity-40"
